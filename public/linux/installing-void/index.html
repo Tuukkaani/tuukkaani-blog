@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/tuukkaani-blog/livereload.js?mindelay=10&amp;v=2&amp;port=35639&amp;path=tuukkaani-blog/livereload" data-no-instant defer></script>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="">
+<meta name="description" content=" Starting out Today I wanted to try out void linux. I grabbed the musl live image from voidlinux.org and booted up a vm. Couple of seconds later &ldquo;welcome to the void linux live system&rdquo; popped:
+I decide to log in as root with the credentials root:voidlinux. After which I start the void-installer then I do the following:
+Change the keyboard to be Finnish by selecting the fi from the menu. Select the network interface and use DHCP. Use the local source for the installation. Select the Finnish (tier 1 prkl) XBPS mirror. Set the hostname to &lsquo;void&rsquo;. Set the timezone to Europe/Helsinki. Set the root password. Create a user account and leave the groups as default. Set the graphical bootloader Create the needed partitions using fdisk g to create a gpt partitioning table n to create a new partition, partition 1, first sector as default, last sector as &#43;512M, t to select the type 1. n to create the second partition, partition 2, first sector as default, last sector as default, type as default. w to write the changes. Setup the filesystem Mount the 512M partition as /boot/efi, format as FAT Mount the root partititon as /, format as EXT4 After which I choose the default services to start.
+" />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="http://localhost:35639/tuukkaani-blog/linux/installing-void/" />
+
+
+    <title>
+        
+            Installing Void :: tuukkaani-blog 
+        
+    </title>
+
+
+
+
+
+  <link rel="stylesheet" href="/tuukkaani-blog/main.min.2729760c629597024c5de34b40ea9f372f2b5a2a192dcdca537b7ddfa483eab8.css" integrity="sha256-Jyl2DGKVlwJMXeNLQOqfNy8rWioZLc3KU3t936SD6rg=" crossorigin="anonymous">
+
+
+
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/tuukkaani-blog/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/tuukkaani-blog/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/tuukkaani-blog/favicon-16x16.png">
+    <link rel="manifest" href="/tuukkaani-blog/site.webmanifest">
+    <link rel="mask-icon" href="/tuukkaani-blog/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="/tuukkaani-blog/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+
+  <meta itemprop="name" content="Installing Void">
+  <meta itemprop="description" content="Starting out Today I wanted to try out void linux. I grabbed the musl live image from voidlinux.org and booted up a vm. Couple of seconds later “welcome to the void linux live system” popped:
+I decide to log in as root with the credentials root:voidlinux. After which I start the void-installer then I do the following:
+Change the keyboard to be Finnish by selecting the fi from the menu. Select the network interface and use DHCP. Use the local source for the installation. Select the Finnish (tier 1 prkl) XBPS mirror. Set the hostname to ‘void’. Set the timezone to Europe/Helsinki. Set the root password. Create a user account and leave the groups as default. Set the graphical bootloader Create the needed partitions using fdisk g to create a gpt partitioning table n to create a new partition, partition 1, first sector as default, last sector as &#43;512M, t to select the type 1. n to create the second partition, partition 2, first sector as default, last sector as default, type as default. w to write the changes. Setup the filesystem Mount the 512M partition as /boot/efi, format as FAT Mount the root partititon as /, format as EXT4 After which I choose the default services to start.">
+  <meta itemprop="datePublished" content="2025-10-03T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-10-03T00:00:00+00:00">
+  <meta itemprop="wordCount" content="1300">
+  <meta itemprop="keywords" content="Linux">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Installing Void">
+  <meta name="twitter:description" content="Starting out Today I wanted to try out void linux. I grabbed the musl live image from voidlinux.org and booted up a vm. Couple of seconds later “welcome to the void linux live system” popped:
+I decide to log in as root with the credentials root:voidlinux. After which I start the void-installer then I do the following:
+Change the keyboard to be Finnish by selecting the fi from the menu. Select the network interface and use DHCP. Use the local source for the installation. Select the Finnish (tier 1 prkl) XBPS mirror. Set the hostname to ‘void’. Set the timezone to Europe/Helsinki. Set the root password. Create a user account and leave the groups as default. Set the graphical bootloader Create the needed partitions using fdisk g to create a gpt partitioning table n to create a new partition, partition 1, first sector as default, last sector as &#43;512M, t to select the type 1. n to create the second partition, partition 2, first sector as default, last sector as default, type as default. w to write the changes. Setup the filesystem Mount the 512M partition as /boot/efi, format as FAT Mount the root partititon as /, format as EXT4 After which I choose the default services to start.">
+
+
+
+
+
+    <meta property="article:section" content="linux" />
+
+
+
+    <meta property="article:published_time" content="2025-10-03 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/tuukkaani-blog" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text ">
+                hello</span>
+            <span class="logo__cursor" style=
+                  "
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+    <main class="post">
+
+        <div class="post-info">
+            
+            </p>
+        </div>
+
+        <article>
+            <h2 class="post-title"><a href="http://localhost:35639/tuukkaani-blog/linux/installing-void/">Installing Void</a></h2>
+
+            
+            
+            
+
+            <div class="post-content">
+                <hr>
+<h3 id="starting-out">Starting out</h3>
+<p>Today I wanted to try out void linux. I grabbed the musl live image from voidlinux.org and booted up a vm.
+Couple of seconds later &ldquo;welcome to the void linux live system&rdquo; popped:</p>
+<p><img src="/tuukkaani-blog/img/linux/installing-void/welcome.png" alt="Welcome"></p>
+<p>I decide to log in as root with the credentials <code>root:voidlinux</code>. After which I start the <code>void-installer</code> then I do the following:</p>
+<ul>
+<li>Change the keyboard to be Finnish by selecting the <em>fi</em> from the menu.</li>
+<li>Select the network interface and use DHCP.</li>
+<li>Use the local source for the installation.</li>
+<li>Select the Finnish (tier 1 prkl) XBPS mirror.</li>
+<li>Set the hostname to &lsquo;void&rsquo;.</li>
+<li>Set the timezone to Europe/Helsinki.</li>
+<li>Set the root password.</li>
+<li>Create a user account and leave the groups as default.</li>
+<li>Set the graphical bootloader</li>
+<li>Create the needed partitions using fdisk
+<ul>
+<li><code>g</code> to create a gpt partitioning table</li>
+<li><code>n</code> to create a new partition, partition 1, first sector as default, last sector as <code>+512M</code>, <code>t</code> to select the type <code>1</code>.</li>
+<li>n to create the second partition, partition 2, first sector as default, last sector as default, type as default.</li>
+<li>w to write the changes.</li>
+</ul>
+</li>
+<li>Setup the filesystem
+<ul>
+<li>Mount the 512M partition as /boot/efi, format as FAT</li>
+<li>Mount the root partititon as /, format as EXT4</li>
+</ul>
+</li>
+</ul>
+<p>After which I choose the default services to start.</p>
+<hr>
+<h3 id="first-boot">First boot</h3>
+<h4 id="updating-the-system">Updating the system</h4>
+<p>Rebooting I get the tty login. I login as my user account and start by updating the system packages with <code>sudo xbps-install -Su</code></p>
+<p>I get the following error:</p>
+<p><img src="/tuukkaani-blog/img/linux/installing-void/xbps-error.png" alt="xbps update"></p>
+<p>Luckily I get some easy to follow instructions! I do as I am told and type:</p>
+<p><code>sudo xbps-install -u xbps</code></p>
+<p>After updating I retry:</p>
+<p><code>sudo xbps-install -Su</code>.</p>
+<h4 id="installing-dbus-and-elogind">Installing dbus and elogind</h4>
+<p>To get these up and running they need to be installed first:</p>
+<p><code>sudo xbps-install dbus elogind</code></p>
+<p>Then they need to enabled:</p>
+<p><code>sudo ln -s /etc/sv/dbus /var/service/</code></p>
+<p><code>sudo ln -s /etc/sv/elogind /var/service/</code></p>
+<h4 id="installing-ufw">Installing ufw</h4>
+<p>Next I&rsquo;m going to install and configure <em>ufw</em> as the firewall. It can be installed with:</p>
+<p><code>sudo xbps-install ufw</code></p>
+<p>As it finishes installing I set it up:</p>
+<p><code>sudo sudo ln -s /etc/sv/ufw /var/service/</code></p>
+<p><code>sudo ufw default deny incoming</code></p>
+<p><code>sudo ufw default allow outgoing</code></p>
+<p><code>sudo ufw reload</code></p>
+<h4 id="for-gpus">For GPUs</h4>
+<p>Now I would install any GPU driver related packages. The necessary info can be found on <a href="https://docs.voidlinux.org/config/graphical-session/graphics-drivers/index.html">(Voidlinux.org.)</a>.</p>
+<p>For my use case I would need drivers for AMD GPU so those would be as follows:</p>
+<ul>
+<li>linux-firmware-amd</li>
+<li>mesa-dri</li>
+<li>vulkan-loader</li>
+<li>mesa-vulkan-radeon</li>
+<li>xf86-video-amdgpu</li>
+<li>mesa-vaapi</li>
+<li>mesa-vdpau</li>
+</ul>
+<p>This is everything I would do before installing things like a window manager and so on. Now is a good time to give the system a restart.</p>
+<hr>
+<h3 id="installing-dwl">Installing DWL</h3>
+<p>I&rsquo;ve decided to use <em>dwl</em> as my window manager for this setup. There are dependencies and tools needed before continuing so
+time to take care of those first.</p>
+<h4 id="dependencies">Dependencies</h4>
+<p>Time to check the dependencies from the dwl repository.</p>
+<p>To install all the base dependencies on void:</p>
+<p><code>sudo xbps-install base-devel libinput libinput-devel wayland wlroots0.19 wlroots0.19-devel libxkbcommon libxkbcommon-devel wayland-protocols pkg-config</code></p>
+<p>For xWayland there are few more that are needed:</p>
+<p><code>sudo xbps-install libxcb libxcb-devel xcb-util-wm xcb-util-wm-devel xorg-server-wayland</code></p>
+<p><a href="https://codeberg.org/dwl/dwl">(Codeberg Dwl.)</a></p>
+<p>Now I&rsquo;m going to need couple of programs to use dwl properly and to help with the configuration:</p>
+<p><code>sudo xbps-install foot wmenu vim firefox git font-firacode</code></p>
+<p>Great! Next it&rsquo;s time to clone the dwl repository:</p>
+<p><code>git clone https://codeberg.org/dwl/dwl.git</code></p>
+<p>I need a place to keep all of the configuration / programs:</p>
+<p><code>mkdir -p ~/.config/suckless &amp;&amp; mv dwl ~/.config/suckless/</code></p>
+<h4 id="the-first-configuration">The first configuration</h4>
+<p>Ok, time to head to the newly created dwl directory and start configuring.
+<em>config.def.h</em> is used to configure dwl. After configuration the dwl will be compiled. All of the configuration is done,
+on compile time, not during runtime. So once its setup, there is no need to worry about&hellip; Right? Lets begin.</p>
+<p>First, lets enable xwayland in <em>config.mk</em> by uncommenting these two lines:</p>
+<p><code>XWAYLAND = -DXWAYLAND</code></p>
+<p><code>XLIBS = xcb xcb-icccm</code></p>
+<p>Next up is the <em>config.def.h</em>, here I want to setup the basic keybindings and some functionality that I like.
+First in the keyboard section, I add a layout:</p>
+<p><code>.layout = &quot;fi&quot;,</code></p>
+<p><img src="/tuukkaani-blog/img/linux/installing-void/keyboard.png" alt="Keyboard configuration"></p>
+<p>Few lines below one can find <code>repeat_rate</code> and <code>repeat_delay</code>. Personally I use <code>repeat_rate = 50</code> and <code>repeat_delay = 200</code>.</p>
+<p>Mouse acceleration is the bane of my existence, but luckily it can be easily turned off by changing:</p>
+<p><code>LIBINPUT_CONFIG_ACCEL_PROFILE_ADAPTIVE</code></p>
+<p>to</p>
+<p><code>LIBINPUT_CONFIG_ACCEL_PROFILE_FLAT</code></p>
+<p>The default MODKEY is alt, which I do not like so I change the:</p>
+<p><code>#define MODKEY WLR_MODIFIER_ALT</code> to <code>WLR_MODIFIER_LOGO</code></p>
+<p>Time to configure those keybindings! They can be found in the <code>Key keys[]</code> array, I like to do the following:</p>
+<ul>
+<li>MODKEY+q -&gt; Open terminal</li>
+<li>MODKEY+r -&gt; Open wmenu</li>
+<li>MODKEY+c -&gt; Close focused window</li>
+<li>MODKEY+f -&gt; fullscreen</li>
+</ul>
+<p>After changing these around it is good to double check for any duplicate bindings!</p>
+<p>Finally, time to write the changes to the file and quit out of vim.</p>
+<h4 id="final-stretch">Final stretch</h4>
+<p>This is all I need for the bare minimum. It is not everyday useable yet, but it is starting to have the functionality necessary
+to start doing things inside the wm, like searches etc.</p>
+<p>Time to compile! In the dwl folder use:</p>
+<p><code>sudo make clean install</code></p>
+<p>And it seems everything worked out without errors! To test if it runs I can just type <code>dwl</code>.
+If everything works like it should, there should be a blank grey screen.</p>
+<p>And voila!</p>
+<p><img src="/tuukkaani-blog/img/linux/installing-void/fastfetch.png" alt="Fastfetch in foot"></p>
+<hr>
+<h3 id="patching-dwl--additional-configuration">Patching DWL &amp; Additional configuration</h3>
+<p>I know, I know, how can anyone improve on perfection? Lets see. First, I might want to try out a wmenu alternative called mew. Then for a quick patch, I&rsquo;d like get the slstatus bar going and do some font adjustments to get everything nice and consistent. Maybe change some colors as well.</p>
+<h4 id="changing-from-wmenu-to-mew">Changing from wmenu to mew</h4>
+<p>So first, mew. There is one dependency that I need to check:</p>
+<p><code>sudo xbps-install fcft fcft-devel</code></p>
+<p>Now I just need to copy the repository and build the thing.</p>
+<p><code>git clone https://codeberg.org/sewn/mew.git</code></p>
+<p>Then a home for the program</p>
+<p><code>mv mew ~/.config/suckless/</code></p>
+<p>Aaand</p>
+<p><code>sudo make clean install</code></p>
+<p>Now lets change the dwl config to use mew. Quit out of dwl with MODKEY+Shift+q and open up the config.def.h.
+In the command section, replace the <code>&quot;wmenu-run&quot;</code> with <code>&quot;mew-run&quot;</code>.</p>
+<p>While at it, lets change the font as well. Mew uses <code>-f</code> flag for font.</p>
+<p><img src="/tuukkaani-blog/img/linux/installing-void/mew-font.png" alt="Mew font"></p>
+<p>Now throw out the old config.h with <code>rm</code> and <code>sudo make clean install</code>.</p>
+<h4 id="barpatch">Bar.patch</h4>
+<p>The patch I am going to be using can be found <a href="https://codeberg.org/dwl/dwl-patches/src/branch/main/patches/bar">here</a>.
+Right click on the newest release and save link as. I like to save the patches to <em>dwl/patches</em>.</p>
+<p>All the required dependencies seem to be already installed. Lucky me.</p>
+<p><a href="https://codeberg.org/dwl/dwl-patches/src/branch/main/patches/bar">(Codeberg dwl-patches.)</a></p>
+<p>Now that we have the <em>bar.patch</em> file. Lets navigate to dwl directory and run <code>patch -i patches/bar.patch</code></p>
+<p><img src="/tuukkaani-blog/img/linux/installing-void/patch-error.png" alt="Patch error"></p>
+<p>Time to open up the <em>config.def.h.rej.</em> file and see what went wrong.</p>
+<p>Apparently a keybind failed. I&rsquo;ll just add it manually by <em>yanking</em> the line to the <em>config.def.h</em>.</p>
+<p>While at it, lets give the <code>*fonts[]</code> a value of <code>Fira Code:style=Bold:size=16</code>.</p>
+<p>With that added, I can <code>rm</code> the old config.h, .rej and .orig files, then do <code>sudo make clean install</code>.</p>
+<h4 id="slstatus">Slstatus</h4>
+<p>Lets get slstatus working. Clone the repository into the suckless directory:</p>
+<p><code>git clone https://git.suckless.org/slstatus</code></p>
+<p>Then in the slstatus directory lets run <code>sudo make clean install</code></p>
+<p>Now to start dwl with slstatus I need to start dwl again by <code>slstatus -s | dwl</code>.</p>
+<h4 id="footini">Foot.ini</h4>
+<p>Lets quickly change that font on foot terminal. I need to first create a ~/.config/foot directory.
+This is where the <em>foot.ini</em> config file will be staying.</p>
+<p><code>mkdir -p ~/.config/foot</code></p>
+<p>Then lets copy the premade config file:</p>
+<p><code>cp /etc/xdg/foot/foot.ini ~/.config/foot/</code></p>
+<p>In the foot.ini we have a familiar looking font tag. Lets change it to be the same as the rest.</p>
+<p><code>font=Fira Code:style=Bold:size=16</code></p>
+<p>There we go, all of the fonts are now nice and consistent!</p>
+<hr>
+<h3 id="sources">Sources</h3>
+<p>Voidlinux.org. Graphics Drivers. Accessed: 10.03.2025. Accessible: <a href="https://docs.voidlinux.org/config/graphical-session/graphics-drivers/index.html">https://docs.voidlinux.org/config/graphical-session/graphics-drivers/index.html</a>.
+Codeberg Dwl. dwl - dwm for Wayland. Accessed: 10.03.2025. Accessible: <a href="https://codeberg.org/dwl/dwl">https://codeberg.org/dwl/dwl</a>.
+Codeberg Mew. mew. Accessed: 10.03.2025. Accessible: <a href="https://codeberg.org/sewn/mew">https://codeberg.org/sewn/mew</a>.
+Codeberg dwl-patches. bar. Accessed: 10.03.2025. Accessible: <a href="https://codeberg.org/dwl/dwl-patches/src/branch/main/patches/bar">https://codeberg.org/dwl/dwl-patches/src/branch/main/patches/bar</a>.</p>
+
+            </div>
+        </article>
+
+        <hr />
+
+        <div class="post-info">
+            
+            
+    <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-folder meta-icon"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+
+        <span class="tag"><a href="http://localhost:35639/tuukkaani-blog/categories/linux/">linux</a></span>
+        
+    </p>
+
+  		</div>
+    </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    
+    
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="/tuukkaani-blog/bundle.min.ad54ad97364f77ede35def9096b162bb1f0b3973aa50b080f5e82fa147f6882e2a7200d7535adbf9b51bebf939f1c1ca9bbe6be87530092aca720eac4a226fda.js" integrity="sha512-rVStlzZPd&#43;3jXe&#43;QlrFiux8LOXOqULCA9egvoUf2iC4qcgDXU1rb&#43;bUb6/k58cHKm75r6HUwCSrKcg6sSiJv2g=="></script>
+
+
+
+
+    </body>
+</html>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Fun with linux on tuukkaani-blog</title>
+    <link>http://localhost:35639/tuukkaani-blog/linux/</link>
+    <description>Recent content in Fun with linux on tuukkaani-blog</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 03 Oct 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:35639/tuukkaani-blog/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Installing Void</title>
+      <link>http://localhost:35639/tuukkaani-blog/linux/installing-void/</link>
+      <pubDate>Fri, 03 Oct 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:35639/tuukkaani-blog/linux/installing-void/</guid>
+      <description>&lt;hr&gt;&#xA;&lt;h3 id=&#34;starting-out&#34;&gt;Starting out&lt;/h3&gt;&#xA;&lt;p&gt;Today I wanted to try out void linux. I grabbed the musl live image from voidlinux.org and booted up a vm.&#xA;Couple of seconds later &amp;ldquo;welcome to the void linux live system&amp;rdquo; popped:&lt;/p&gt;&#xA;&lt;p&gt;&lt;img src=&#34;http://localhost:35639/tuukkaani-blog/img/linux/installing-void/welcome.png&#34; alt=&#34;Welcome&#34;&gt;&lt;/p&gt;&#xA;&lt;p&gt;I decide to log in as root with the credentials &lt;code&gt;root:voidlinux&lt;/code&gt;. After which I start the &lt;code&gt;void-installer&lt;/code&gt; then I do the following:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Change the keyboard to be Finnish by selecting the &lt;em&gt;fi&lt;/em&gt; from the menu.&lt;/li&gt;&#xA;&lt;li&gt;Select the network interface and use DHCP.&lt;/li&gt;&#xA;&lt;li&gt;Use the local source for the installation.&lt;/li&gt;&#xA;&lt;li&gt;Select the Finnish (tier 1 prkl) XBPS mirror.&lt;/li&gt;&#xA;&lt;li&gt;Set the hostname to &amp;lsquo;void&amp;rsquo;.&lt;/li&gt;&#xA;&lt;li&gt;Set the timezone to Europe/Helsinki.&lt;/li&gt;&#xA;&lt;li&gt;Set the root password.&lt;/li&gt;&#xA;&lt;li&gt;Create a user account and leave the groups as default.&lt;/li&gt;&#xA;&lt;li&gt;Set the graphical bootloader&lt;/li&gt;&#xA;&lt;li&gt;Create the needed partitions using fdisk&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;code&gt;g&lt;/code&gt; to create a gpt partitioning table&lt;/li&gt;&#xA;&lt;li&gt;&lt;code&gt;n&lt;/code&gt; to create a new partition, partition 1, first sector as default, last sector as &lt;code&gt;+512M&lt;/code&gt;, &lt;code&gt;t&lt;/code&gt; to select the type &lt;code&gt;1&lt;/code&gt;.&lt;/li&gt;&#xA;&lt;li&gt;n to create the second partition, partition 2, first sector as default, last sector as default, type as default.&lt;/li&gt;&#xA;&lt;li&gt;w to write the changes.&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;Setup the filesystem&#xA;&lt;ul&gt;&#xA;&lt;li&gt;Mount the 512M partition as /boot/efi, format as FAT&lt;/li&gt;&#xA;&lt;li&gt;Mount the root partititon as /, format as EXT4&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;After which I choose the default services to start.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

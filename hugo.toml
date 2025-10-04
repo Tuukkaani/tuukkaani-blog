@@ -1,0 +1,5 @@
+baseURL = 'https://tuukkaani.github.io/tuukkaani-blog'
+languageCode = 'en-us'
+title = 'tuukkaani-blog'
+theme = 'hello-friend-ng'
+

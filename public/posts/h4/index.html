@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head><script src="/tuukkaani-blog/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=tuukkaani-blog/livereload" data-no-instant defer></script>
+        <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="author" content="">
+<meta name="description" content="H4 a) Dirfuz-1 I got the target binary from (Tero Karvinen Find Hidden Web Directories - Fuzz URLs with ffuf.) and chmod u&#43;x dirfuzt-1 to make it runnable. I also got the seclists by sudo apt install seclists. After which I disconnected my virtual machine from the internet. We are tasked to find two URLs: Admin page and a Version Control related page.
+After running the random binary ./dirfuzt-1 I found on the internet and whose creator told me to do so, I got the front page up.
+" />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<meta name="theme-color" content="" />
+<link rel="canonical" href="http://localhost:1313/tuukkaani-blog/posts/h4/" />
+
+
+    <title>
+        
+            Enumeration with ffuf :: tuukkaani-blog 
+        
+    </title>
+
+
+
+
+
+  <link rel="stylesheet" href="/tuukkaani-blog/main.min.ab5336003ba331300318b49292c672210905baf1ef5410a739f647e70c8808fa.css" integrity="sha256-q1M2ADujMTADGLSSksZyIQkFuvHvVBCnOfZH5wyICPo=" crossorigin="anonymous">
+
+
+
+
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/tuukkaani-blog/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/tuukkaani-blog/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/tuukkaani-blog/favicon-16x16.png">
+    <link rel="manifest" href="/tuukkaani-blog/site.webmanifest">
+    <link rel="mask-icon" href="/tuukkaani-blog/safari-pinned-tab.svg" color="">
+    <link rel="shortcut icon" href="/tuukkaani-blog/favicon.ico">
+    <meta name="msapplication-TileColor" content="">
+
+
+
+  <meta itemprop="name" content="Enumeration with ffuf">
+  <meta itemprop="description" content="H4 a) Dirfuz-1 I got the target binary from (Tero Karvinen Find Hidden Web Directories - Fuzz URLs with ffuf.) and chmod u&#43;x dirfuzt-1 to make it runnable. I also got the seclists by sudo apt install seclists. After which I disconnected my virtual machine from the internet. We are tasked to find two URLs: Admin page and a Version Control related page.
+After running the random binary ./dirfuzt-1 I found on the internet and whose creator told me to do so, I got the front page up.">
+  <meta itemprop="datePublished" content="2025-09-15T00:00:00+00:00">
+  <meta itemprop="dateModified" content="2025-09-15T00:00:00+00:00">
+  <meta itemprop="wordCount" content="937">
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Enumeration with ffuf">
+  <meta name="twitter:description" content="H4 a) Dirfuz-1 I got the target binary from (Tero Karvinen Find Hidden Web Directories - Fuzz URLs with ffuf.) and chmod u&#43;x dirfuzt-1 to make it runnable. I also got the seclists by sudo apt install seclists. After which I disconnected my virtual machine from the internet. We are tasked to find two URLs: Admin page and a Version Control related page.
+After running the random binary ./dirfuzt-1 I found on the internet and whose creator told me to do so, I got the front page up.">
+
+
+
+
+
+
+
+    <meta property="article:published_time" content="2025-09-15 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+    </head>
+
+    
+        <body>
+    
+    
+        <div class="container">
+            <header class="header">
+    <span class="header__inner">
+        <a href="/tuukkaani-blog" style="text-decoration: none;">
+    <div class="logo">
+        
+            <span class="logo__mark">></span>
+            <span class="logo__text ">
+                hello</span>
+            <span class="logo__cursor" style=
+                  "
+                   
+                   ">
+            </span>
+        
+    </div>
+</a>
+
+
+        <span class="header__right">
+        </span>
+    </span>
+</header>
+
+
+            <div class="content">
+                
+  <main class="post">
+
+    <div class="post-info">
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-clock">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        5 minutes
+
+        
+      </p>
+    </div>
+
+    <article>
+      <h1 class="post-title">
+        <a href="http://localhost:1313/tuukkaani-blog/posts/h4/">Enumeration with ffuf</a>
+      </h1>
+
+      
+
+      
+
+      
+
+      <div class="post-content">
+        <h1 id="h4">H4</h1>
+<hr>
+<h3 id="a-dirfuz-1">a) Dirfuz-1</h3>
+<p>I got the target binary from <a href="https://terokarvinen.com/2024/fuzz-urls-find-hidden-directories/">(Tero Karvinen Find Hidden Web Directories - Fuzz URLs with ffuf.)</a> and <code>chmod u+x dirfuzt-1</code> to make it runnable. I also got the seclists by <code>sudo apt install seclists</code>. After which I disconnected
+my virtual machine from the internet. We are tasked to find two URLs: Admin page and a Version Control related page.</p>
+<p><img src="img/h4/challenge.png" alt="Challenge"></p>
+<p>After running the random binary <code>./dirfuzt-1</code> I found on the internet and whose creator told me to do so, I got the front page up.</p>
+<p><img src="img/h4/dirfuzt.png" alt="Trust me bro"></p>
+<p>My first though was to just try running ffuf as follows: <code>ffuf -u http://127.0.0.2:8000/FUZZ -w /usr/share/seclists/Discovery/Web-Content/common.txt -mc 200</code>. After doing so I got a huge list of pages with similar stats.</p>
+<p><img src="img/h4/fuff.png" alt="Ffuf results"></p>
+<p>And if we go to one of these pages, for example /zips, we can see it is the same as the index page.</p>
+<p><img src="img/h4/zips.png" alt="Nothing, again"></p>
+<p>Now I assume most of the pages that returned with 200 are the same page, so I need to do some additional filtering.
+I decide to filter by word count. In the <a href="https://manpages.debian.org/testing/ffuf/ffuf.1.en.html">Ffuf man pages</a> I found flag for filtering by word count. I ran the previous command again now with the new additional <code>-fw 9</code> flag and got the following results.</p>
+<p><img src="img/h4/newffuf.png" alt="Filtered results"></p>
+<p>It seems ffuf found pages that related to the task at hand, going to the /wp-admin page gives us our first flag.</p>
+<p><img src="img/h4/firstflag.png" alt="First flag"></p>
+<p>The second flag can be found on any of the /.git pages.</p>
+<p><img src="img/h4/secondflag.png" alt="Second flag"></p>
+<p>And so the challenge is done. In the end we found the flags by running the following command <code>ffuf -u http://127.0.0.2:8000/FUZZ -w /usr/share/seclists/Discovery/Web-Content/common.txt -mc 200 -fw 9</code>. So in short, we dug through the target URL for
+using <code>-w /your/wordlist/here</code> wordlist, <code>-mc 200</code> to match all pages that return with status 200 and lastly <code>-fw 9</code> filter out pages with the word count of 9. Once again, all of this can be found from ffuf&rsquo;s man pages. <a href="https://manpages.debian.org/testing/ffuf/ffuf.1.en.html">(Fuff man page.)</a></p>
+<hr>
+<h3 id="b-fuffme">b) Fuffme</h3>
+<p>For this section, I&rsquo;ll be following the instructions found at <a href="https://terokarvinen.com/2023/fuffme-web-fuzzing-target-debian/">(Tero Karvinen Fuffme).</a>
+I installed the missing dependencies, in this case docker <code>sudo apt install docker.io</code>. After which I followed the
+rest of the guide and got the container running successfully.</p>
+<p><img src="img/h4/ffufme.png" alt="Fuffme curl"></p>
+<p>Next I got the wordlists that were listed in the instructions, disconnected the vm and then I was ready to start doing the
+practice exercises.</p>
+<hr>
+<h3 id="c-basic-content-discovery">c) Basic Content Discovery</h3>
+<p>So the first I needed to do the following:</p>
+<p><img src="img/h4/basic.png" alt="Basic fuzz"></p>
+<p>And it seems everything is in working order:</p>
+<p><img src="img/h4/basicffuf.png" alt="Ffuf output"></p>
+<hr>
+<h3 id="d-content-discovery-with-recursion">d) Content Discovery With Recursion</h3>
+<p>Again the task goes as follows:</p>
+<p><img src="img/h4/recursion.png" alt="Recursion task"></p>
+<p>After doing the task, I didn&rsquo;t really like that fact that the output
+doesn&rsquo;t show the full URL, but instead lists just the matched word. I did some digging and found a pull request where such flag
+was to be added, but joohoi seems to avoid <em>bloat</em> so an alternative solution was given by piping to grep <a href="https://github.com/ffuf/ffuf/pull/490">(Ffuf pull request.)</a>. In the end this is the command I ran <code>ffuf -u http://localhost/cd/recursion/FUZZ -w /usr/share/wordlists/common.txt -recursion -v 2&gt;/dev/null | grep -oE 'http[^ ]*'</code>.</p>
+<p><img src="img/h4/recursionffuf.png" alt="Recursion ffuf"></p>
+<hr>
+<h3 id="e-content-discovery-with-file-extensions">e) Content Discovery With File Extensions</h3>
+<p>The task:</p>
+<p><img src="img/h4/fileextension.png" alt="File Extensions"></p>
+<p>Results by using <code>ffuf -u http://localhost/cd/ext/logs/FUZZ -w common.txt -e .log</code>:</p>
+<p><img src="img/h4/extffuf.png" alt="Ffuf results"></p>
+<hr>
+<h3 id="f-no-404-status">f) No 404 status</h3>
+<p>The task:</p>
+<p><img src="img/h4/404.png" alt="no404"></p>
+<p>Results by using <code>ffuf -u http://localhost/cd/no404/FUZZ -w common.txt -fs 669</code>:</p>
+<p><img src="img/h4/404ffuf.png" alt="Ffuf results"></p>
+<hr>
+<h3 id="g-param-mining">g) Param mining</h3>
+<p>The task:</p>
+<p><img src="img/h4/mining.png" alt="Param Mining"></p>
+<p>Results by using <code>ffuf -u http://localhost/cd/param/data?FUZZ=1 -w common.txt</code>:</p>
+<p><img src="img/h4/miningffuf.png" alt="Ffuf results"></p>
+<hr>
+<h3 id="h-rate-limited">h) Rate Limited</h3>
+<p>So the following task is:</p>
+<p><img src="img/h4/rate.png" alt="Rate Limited"></p>
+<p>We are told that the our requests have a 50 requests/second limit.
+So we first <code>ffuf -u http://localhost/cd/rate/FUZZ -w /usr/share/wordlists/common.txt -mc 200,429</code>:</p>
+<p><img src="img/h4/ratefirst.png" alt="Ffuf hitting the limits"></p>
+<p>Here we see a bunch of status 429s. This is due to us hitting the limit and getting our driver&rsquo;s license revoked for a couple of seconds. We repeat what we just did, but this time abide by the rate limits to avoid any issues <code>ffuf -u http://localhost/cd/rate/FUZZ -w /usr/share/wordlists/common.txt -t 5 -p 0.1 -mc 200,429</code>:</p>
+<p><img src="img/h4/ratesecond.png" alt="Ffuf but slower"></p>
+<p>Now we got the file we were after, the process also notably took longer to finish.</p>
+<hr>
+<h3 id="i-subdomains---virtual-host-enumeration">i) Subdomains - Virtual host Enumeration</h3>
+<p>Task at hand:</p>
+<p><img src="img/h4/subdomain.png" alt="Subdomains"></p>
+<p>We can enumerate the subdomains by using the Host header with ffuf on virtual hosts.
+Results by using <code>ffuf -u http://localhost -H &quot;Host: FUZZ.ffuf.me&quot; -w subdomains.txt -fs 1495</code>:</p>
+<p><img src="img/h4/subdomainffuf.png" alt="Subdomains ffuf"></p>
+<hr>
+<h3 id="x-additional-reading">x) Additional reading</h3>
+<h4 id="fuzz-urls-with-ffuf">Fuzz URLs with ffuf</h4>
+<p>The page goes over what ffuf is and what it is used for.
+After which we are guided through a process of installing sample targets
+and all the required tools and dictionaries for attacking the sample targets.
+Lastly you can find some use case examples with useful flags that will be used when
+testing against the given targets. <a href="https://terokarvinen.com/2024/fuzz-urls-find-hidden-directories/">(Tero Karvinen Find Hidden Web Directories - Fuzz URLs with ffuf).</a></p>
+<h4 id="ffuf-readme">Ffuf readme</h4>
+<p>The readme page goes over, well, the usage of ffuf including installation, use cases,
+the flags and so on. The readme page&rsquo;s content itself isn&rsquo;t really that interesting, but the readme page as a whole is pretty good. Having practice targets made by other people listed, video examples, concise examples and instructions.
+Everything is easy to find and parse through quickly especially compared to some other readme pages
+which can be like opening all of the holy texts in one go. After seeing all the flags listed, I can also understand why
+joohoi might want to limit the amounts of flags added. Keeping everything fast and avoiding unnecessary <em>bloat</em>, seems
+to be quite high up the priority list. A choice that is hard to dislike for sure :D. <a href="https://github.com/ffuf/ffuf/blob/master/README.md">(Hoikkala &ldquo;joohoi&rdquo; 2023. Ffuf readme).</a></p>
+<hr>
+<h3 id="sources">Sources</h3>
+<p>All the assignments this page is based on can be found at <a href="https://terokarvinen.com/tunkeutumistestaus/">Tero Karvinen</a></p>
+<p><a href="https://terokarvinen.com/2024/fuzz-urls-find-hidden-directories/">Tero Karvinen Find Hidden Web Directories - Fuzz URLs with ffuf.</a></p>
+<p><a href="https://terokarvinen.com/2023/fuffme-web-fuzzing-target-debian/">Tero Karvinen Fuffme.</a></p>
+<p><a href="https://github.com/ffuf/ffuf/pull/490">Ffuf pull request.</a></p>
+<p><a href="https://manpages.debian.org/testing/ffuf/ffuf.1.en.html">Fuff man page.</a></p>
+<p><a href="https://github.com/ffuf/ffuf/blob/master/README.md">Hoikkala &ldquo;joohoi&rdquo; 2023. Ffuf readme.</a></p>
+
+      </div>
+    </article>
+
+    <hr />
+
+    <div class="post-info">
+      
+      
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+        937 Words
+      </p>
+
+      <p>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        
+          2025-09-15 03:00
+        
+
+         
+          
+        
+      </p>
+    </div>
+
+    
+    <div class="pagination">
+        
+
+        <div class="pagination__buttons">
+            
+            <span class="button previous">
+                <a href="http://localhost:1313/tuukkaani-blog/posts/h5/">
+                    <span class="button__icon">←</span>
+                    <span class="button__text">Password cracking with Hashcat &amp; John</span>
+                </a>
+            </span>
+            
+
+            
+            <span class="button next">
+                <a href="http://localhost:1313/tuukkaani-blog/posts/h3/">
+                    <span class="button__text">Certificates &amp; Web vulnerabilities</span>
+                    <span class="button__icon">→</span>
+                </a>
+            </span>
+            
+        </div>
+    </div>
+
+
+    
+
+    
+
+    
+
+  </main>
+
+            </div>
+
+            
+                <footer class="footer">
+    
+    
+</footer>
+
+            
+        </div>
+
+        
+
+
+
+<script type="text/javascript" src="/tuukkaani-blog/bundle.min.ad54ad97364f77ede35def9096b162bb1f0b3973aa50b080f5e82fa147f6882e2a7200d7535adbf9b51bebf939f1c1ca9bbe6be87530092aca720eac4a226fda.js" integrity="sha512-rVStlzZPd&#43;3jXe&#43;QlrFiux8LOXOqULCA9egvoUf2iC4qcgDXU1rb&#43;bUb6/k58cHKm75r6HUwCSrKcg6sSiJv2g=="></script>
+
+
+
+
+    </body>
+</html>

