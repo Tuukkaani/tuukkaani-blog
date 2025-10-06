@@ -5,6 +5,7 @@ theme = 'hello-friend-ng'
 
 [params.Logo]
 logoText = "Hello there!"
+logoMark = "$"
 logoHomeLink = "/tuukkaani-blog/"
 logoCursorColor = "#00ffcc"
 logoCursorAnimate = "1.5s"
