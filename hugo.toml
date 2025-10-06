@@ -1,5 +1,25 @@
-baseURL = 'https://tuukkaani.github.io/tuukkaani-blog'
+baseURL = "https://tuukkaani.github.io/tuukkaani-blog/"
 languageCode = 'en-us'
 title = 'tuukkaani-blog'
 theme = 'hello-friend-ng'
 
+[params.Logo]
+logoText = "Hello there!"
+logoHomeLink = "/tuukkaani-blog/"
+logoCursorColor = "#00ffcc"
+logoCursorAnimate = "1.5s"
+logoCursorDisabled = false
+
+[menu]
+
+[[menu.main]]
+identifier = "home"
+name = "Home"
+url = "/"
+weight = 1
+
+[[menu.main]]
+identifier = "pentesting-course"
+name = "Pentesting Course"
+url = "/pentesting-course/"
+weight = 2

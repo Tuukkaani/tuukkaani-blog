@@ -2,24 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on tuukkaani-blog</title>
-    <link>http://localhost:35639/tuukkaani-blog/categories/</link>
+    <link>http://localhost:1313/tuukkaani-blog/categories/</link>
     <description>Recent content in Categories on tuukkaani-blog</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Fri, 03 Oct 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:35639/tuukkaani-blog/categories/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Linux</title>
-      <link>http://localhost:35639/tuukkaani-blog/categories/linux/</link>
-      <pubDate>Fri, 03 Oct 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:35639/tuukkaani-blog/categories/linux/</guid>
-      <description></description>
-    </item>
+    <lastBuildDate>Thu, 02 Oct 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tuukkaani-blog/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Pentesting-Course</title>
-      <link>http://localhost:35639/tuukkaani-blog/categories/pentesting-course/</link>
+      <link>http://localhost:1313/tuukkaani-blog/categories/pentesting-course/</link>
       <pubDate>Thu, 02 Oct 2025 00:00:00 +0000</pubDate>
-      <guid>http://localhost:35639/tuukkaani-blog/categories/pentesting-course/</guid>
+      <guid>http://localhost:1313/tuukkaani-blog/categories/pentesting-course/</guid>
       <description></description>
     </item>
   </channel>

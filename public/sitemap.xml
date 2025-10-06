@@ -3,19 +3,7 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>http://localhost:1313/tuukkaani-blog/categories/</loc>
-    <lastmod>2025-10-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tuukkaani-blog/linux/</loc>
-    <lastmod>2025-10-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tuukkaani-blog/linux/installing-void/</loc>
-    <lastmod>2025-10-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tuukkaani-blog/categories/linux/</loc>
-    <lastmod>2025-10-03T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tuukkaani-blog/</loc>
-    <lastmod>2025-10-03T00:00:00+00:00</lastmod>
+    <lastmod>2025-10-02T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tuukkaani-blog/pentesting-course/h6/</loc>
     <lastmod>2025-10-02T00:00:00+00:00</lastmod>
@@ -24,6 +12,9 @@
     <lastmod>2025-10-02T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tuukkaani-blog/categories/pentesting-course/</loc>
+    <lastmod>2025-10-02T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/tuukkaani-blog/</loc>
     <lastmod>2025-10-02T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://localhost:1313/tuukkaani-blog/pentesting-course/h5/</loc>
